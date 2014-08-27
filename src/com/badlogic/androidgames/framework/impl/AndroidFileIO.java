@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import com.badlogic.androidgames.framework.FileIO;
@@ -23,8 +22,7 @@ public class AndroidFileIO implements FileIO {
     public AndroidFileIO(Context context) {
         this.context = context;
         this.assets = context.getAssets();
-        this.externalStoragePath = Environment.getExternalStorageDirectory()
-                .getAbsolutePath() + File.separator;
+        this.externalStoragePath = context.getExternalFilesDir(null).getAbsolutePath() + File.separator;
     }
 
     public InputStream readAsset(String fileName) throws IOException {
@@ -38,7 +36,7 @@ public class AndroidFileIO implements FileIO {
     public OutputStream writeFile(String fileName) throws IOException {
         return new FileOutputStream(externalStoragePath + fileName);
     }
-    
+
     public SharedPreferences getPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }

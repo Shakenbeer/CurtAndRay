@@ -3,7 +3,6 @@ package com.badlogic.androidgames.framework.impl;
 import java.util.List;
 
 import android.content.Context;
-import android.os.Build.VERSION;
 import android.view.View;
 
 import com.badlogic.androidgames.framework.Input;
@@ -16,9 +15,6 @@ public class AndroidInput implements Input {
     public AndroidInput(Context context, View view, float scaleX, float scaleY) {
         accelHandler = new AccelerometerHandler(context);
         keyHandler = new KeyboardHandler(view);               
-        if (VERSION.SDK_INT < 5) 
-            touchHandler = new SingleTouchHandler(view, scaleX, scaleY);
-        else
             touchHandler = new MultiTouchHandler(view, scaleX, scaleY);        
     }
 
