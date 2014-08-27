@@ -8,6 +8,7 @@ public class CurtAndRayGame extends AndroidGame {
 
     @Override
     public Screen getStartScreen() {
+        //asd
         return new LoadingScreen(this);
     }   
 }
