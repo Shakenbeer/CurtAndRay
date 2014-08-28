@@ -3,6 +3,7 @@ package com.badlogic.androidgames.framework.impl;
 import java.io.IOException;
 import java.io.InputStream;
 
+import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -15,6 +16,7 @@ import android.graphics.Rect;
 
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
+import com.badlogic.androidgames.framework.Graphics.PixmapFormat;
 
 public class AndroidGraphics implements Graphics {
     AssetManager assets;
@@ -43,9 +45,23 @@ public class AndroidGraphics implements Graphics {
         Options options = new Options();
         options.inPreferredConfig = config;
 
-        Bitmap bitmap = BitmapFactory.decodeFile(fileName, options);
-        if (bitmap == null)
+        InputStream in = null;
+        Bitmap bitmap = null;
+        try {
+            in = assets.open(fileName);
+            bitmap = BitmapFactory.decodeStream(in);
+            if (bitmap == null)
+                throw new RuntimeException("Couldn't load bitmap from asset '" + fileName + "'");
+        } catch (IOException e) {
             throw new RuntimeException("Couldn't load bitmap from asset '" + fileName + "'");
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                }
+            }
+        }
 
         if (bitmap.getConfig() == Config.RGB_565)
             format = PixmapFormat.RGB565;
