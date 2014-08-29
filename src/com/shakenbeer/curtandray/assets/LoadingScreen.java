@@ -30,6 +30,7 @@ public class LoadingScreen extends Screen {
         assets.setButtonSoundOn(g.newPixmap("button_sound_on.png", PixmapFormat.ARGB4444));
         assets.setButtonStart(g.newPixmap("button_start.png", PixmapFormat.ARGB4444));
         assets.setButtonClose(g.newPixmap("button_close.png", PixmapFormat.ARGB4444));
+        assets.setButtonPause(g.newPixmap("button_pause", PixmapFormat.ARGB4444));
 
         assets.setCurt(g.newPixmap("curt.png", PixmapFormat.ARGB4444));
         assets.setDigits(g.newPixmap("digits.png", PixmapFormat.ARGB4444));

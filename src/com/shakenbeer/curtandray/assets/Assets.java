@@ -27,6 +27,7 @@ public enum Assets {
     private Pixmap buttonSoundOff;
     private Pixmap buttonStart;
     private Pixmap buttonClose;
+    private Pixmap buttonPause;
 
     private Sound soundClick;
     private Sound soundHideMine;
@@ -200,6 +201,14 @@ public enum Assets {
 
     public void setButtonClose(Pixmap buttonClose) {
         this.buttonClose = buttonClose;
+    }
+
+    public Pixmap getButtonPause() {
+        return buttonPause;
+    }
+
+    public void setButtonPause(Pixmap buttonPause) {
+        this.buttonPause = buttonPause;
     }
 
     public Sound getSoundClick() {
