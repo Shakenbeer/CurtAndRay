@@ -1,11 +1,12 @@
-package com.shakenbeer.curtandray.assets;
+package com.shakenbeer.curtandray.ui;
 
 import com.badlogic.androidgames.framework.Audio;
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Graphics.PixmapFormat;
 import com.badlogic.androidgames.framework.Screen;
-import com.shakenbeer.curtandray.ui.MainMenuScreen;
+import com.shakenbeer.curtandray.assets.Assets;
+import com.shakenbeer.curtandray.assets.Settings;
 
 public class LoadingScreen extends Screen {
 
