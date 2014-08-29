@@ -1,4 +1,4 @@
-package com.shakenbeer.curtandray.assets;
+package com.shakenbeer.curtandray.game;
 
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;

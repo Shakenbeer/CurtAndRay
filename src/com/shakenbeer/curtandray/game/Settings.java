@@ -1,4 +1,4 @@
-package com.shakenbeer.curtandray.assets;
+package com.shakenbeer.curtandray.game;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

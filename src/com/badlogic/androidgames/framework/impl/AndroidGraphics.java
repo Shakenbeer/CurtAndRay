@@ -3,26 +3,26 @@ package com.badlogic.androidgames.framework.impl;
 import java.io.IOException;
 import java.io.InputStream;
 
-import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
-import com.badlogic.androidgames.framework.Graphics.PixmapFormat;
 
 public class AndroidGraphics implements Graphics {
     AssetManager assets;
     Bitmap frameBuffer;
     Canvas canvas;
     Paint paint;
+    Matrix matrix;
     Rect srcRect = new Rect();
     Rect dstRect = new Rect();
 
@@ -31,6 +31,7 @@ public class AndroidGraphics implements Graphics {
         this.frameBuffer = frameBuffer;
         this.canvas = new Canvas(frameBuffer);
         this.paint = new Paint();
+        this.matrix = new Matrix();
     }
 
     public Pixmap newPixmap(String fileName, PixmapFormat format) {
@@ -111,11 +112,27 @@ public class AndroidGraphics implements Graphics {
         canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, x, y, null);
     }
 
+    public void drawPixmap(Pixmap pixmap, int dx, int dy, int centerX, int centerY, float angle) {
+        matrix.reset();
+        matrix.setTranslate(dx, dy);
+        matrix.postRotate(angle, centerX, centerY);
+        canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, matrix, null);
+        
+    }
+
     public int getWidth() {
         return frameBuffer.getWidth();
     }
 
     public int getHeight() {
         return frameBuffer.getHeight();
+    }
+
+    @Override
+    public void testDraw() {
+        canvas.drawCircle(350, 550, 5, paint);
+        canvas.drawCircle(100, 250, 5, paint);
+        canvas.drawCircle(700, 1000, 5, paint);
+        
     }
 }

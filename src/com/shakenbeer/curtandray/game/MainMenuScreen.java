@@ -1,4 +1,4 @@
-package com.shakenbeer.curtandray.ui;
+package com.shakenbeer.curtandray.game;
 
 import java.util.List;
 
@@ -8,8 +8,6 @@ import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Screen;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
-import com.shakenbeer.curtandray.assets.Assets;
-import com.shakenbeer.curtandray.assets.Settings;
 
 public class MainMenuScreen extends Screen {
 
