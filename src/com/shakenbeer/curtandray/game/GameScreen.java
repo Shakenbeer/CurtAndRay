@@ -2,8 +2,6 @@ package com.shakenbeer.curtandray.game;
 
 import java.util.List;
 
-import android.util.Log;
-
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
@@ -100,6 +98,7 @@ public class GameScreen extends Screen {
     }
 
     private void drawCommon(Graphics graphics) {
+        
         graphics.drawPixmap(Assets.INSTANCE.getBackground(), 0, 0);
         graphics.drawPixmap(Assets.INSTANCE.getNextLevel(), 34, 0);
         graphics.drawPixmap(Assets.INSTANCE.getButtonPause(), 0, 0);
@@ -119,8 +118,6 @@ public class GameScreen extends Screen {
             graphics.drawPixmap(mo.pixmap, (int) mo.translationX(), (int) mo.translationY(), (int) mo.posX,
                     (int) mo.posY, mo.angle);
         }
-
-        graphics.testDraw();
 
     }
 

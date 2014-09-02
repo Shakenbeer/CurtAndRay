@@ -12,7 +12,7 @@ public class MovingObject {
     Pixmap pixmap;
     float transX;
     float transY;
-    float absVel;
+    float velNormSquare;
 
     public MovingObject(float posX, float posY, float velX, float velY, float angle, ImageInfo imageInfo) {
         this.posX = posX;

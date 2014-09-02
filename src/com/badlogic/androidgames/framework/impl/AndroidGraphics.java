@@ -130,9 +130,6 @@ public class AndroidGraphics implements Graphics {
 
     @Override
     public void testDraw() {
-        canvas.drawCircle(350, 550, 5, paint);
-        canvas.drawCircle(100, 250, 5, paint);
-        canvas.drawCircle(700, 1000, 5, paint);
         
     }
 }

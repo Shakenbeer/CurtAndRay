@@ -1,10 +1,11 @@
 package com.shakenbeer.curtandray.game;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+import android.util.Log;
 
 import com.badlogic.androidgames.framework.Input.TouchEvent;
 
@@ -25,6 +26,7 @@ public class GameController {
     Queue<int[]> minePos;
     int[] rayTarget;
     ImageInfo mineImage = new ImageInfo(32, 32, 64, 64, 32);
+    ImageInfo flagImage = new ImageInfo(9, 72, 62, 80, 32);
 
     public GameController() {
         ImageInfo info = new ImageInfo(55, 66, 110, 122, 32);
@@ -46,73 +48,88 @@ public class GameController {
         flags = new ArrayList<StaticObject>();
     }
 
-    private void generateMines() {
-        minePos = new LinkedList<int[]>();
-        minePos.add(new int[] { 350, 550 });
-        minePos.add(new int[] { 100, 250 });
-        minePos.add(new int[] { 700, 1000 });
-
-    }
-
     public void update(List<TouchEvent> touchEvents, float deltaTime) {
         if (stage == GameStage.Ray) {
-            float[] rv;
-
-            if (rayTarget != null) {
-                rv = directionVector();
-            } else {
-                rayTarget = minePos.remove();
-                rv = directionVector();
-                changeDirection(ray, rv);
-            }
-
-            if (rv[0] * rv[0] + rv[1] * rv[1] < 25) {
-                StaticObject mine = new StaticObject(rayTarget[0], rayTarget[1], mineImage);
-                mine.pixmap = Assets.INSTANCE.getMine();
-                mines.add(mine);
-                rayTarget = null;
-                if (Settings.soundEnabled) {
-                    Assets.INSTANCE.getSoundSetupMine().play(1);
-                }
-                if (minePos.isEmpty()) {
-                    stage = GameStage.RayHide;
-                }
-            }
-            ray.move(deltaTime);
-            
+            updateRayStage(deltaTime);
         } else if (stage == GameStage.RayHide) {
-            float[] rv;
-            StaticObject mine;
-
-            if (rayTarget != null) {
-                rv = directionVector();
-            } else {
-                mine = mines.get(0);
-                rayTarget = new int[] { mine.posX, mine.posY };
-                rv = directionVector();
-                changeDirection(ray, rv);
-            }
-
-            if (rv[0] * rv[0] + rv[1] * rv[1] < 25) {
-                minePos.add(new int[] { rayTarget[0], rayTarget[1] });
-                mines.remove(0);
-                rayTarget = null;
-                if (Settings.soundEnabled) {
-                    Assets.INSTANCE.getSoundHideMine().play(1);
-                }
-                if (mines.isEmpty()) {
-                    chars.remove(ray);
-                    stage = GameStage.BuildPath;
-                }
-            }
-            ray.move(deltaTime);
-
+            updateRayHideStage(deltaTime);
+        } else if (stage == GameStage.BuildPath) {
+            updateBuildPathStage(touchEvents, deltaTime);
         }
 
     }
 
+    private void generateMines() {
+        minePos = new LinkedList<int[]>();
+        minePos.add(new int[] { 100, 200 });
+        minePos.add(new int[] { 100, 800 });
+        minePos.add(new int[] { 524, 376 });
+    }
+
+    private void updateRayStage(float deltaTime) {
+        float[] rv;
+
+        if (rayTarget != null) {
+            rv = directionVector();
+        } else {
+            rayTarget = minePos.remove();
+            rv = directionVector();
+            changeDirection(ray, rv);
+        }
+
+        if (rv[0] * rv[0] + rv[1] * rv[1] < 25) {
+            StaticObject mine = new StaticObject(rayTarget[0], rayTarget[1], mineImage);
+            mine.pixmap = Assets.INSTANCE.getMine();
+            mines.add(mine);
+            ray.posX = rayTarget[0];
+            ray.posY = rayTarget[1];
+            rayTarget = null;
+            if (Settings.soundEnabled) {
+                Assets.INSTANCE.getSoundSetupMine().play(1);
+            }
+            if (minePos.isEmpty()) {
+                stage = GameStage.RayHide;
+            }
+        }
+        ray.move(deltaTime);
+    }
+    
+    private void updateRayHideStage(float deltaTime) {
+        float[] rv;
+        StaticObject mine;
+
+        if (rayTarget != null) {
+            rv = directionVector();
+        } else {
+            mine = mines.get(0);
+            rayTarget = new int[] { mine.posX, mine.posY };
+            rv = directionVector();
+            changeDirection(ray, rv);
+        }
+
+        if (rv[0] * rv[0] + rv[1] * rv[1] < 25) {
+            minePos.add(new int[] { rayTarget[0], rayTarget[1] });
+            mines.remove(0);
+            rayTarget = null;
+            if (Settings.soundEnabled) {
+                Assets.INSTANCE.getSoundHideMine().play(1);
+            }
+            if (mines.isEmpty()) {
+                ray.velNormSquare = 0;
+                chars.remove(ray);
+                stage = GameStage.BuildPath;
+            }
+        }
+        ray.move(deltaTime);
+    }
+    
+    private void updateBuildPathStage(List<TouchEvent> touchEvents, float deltaTime) {
+        int len = touchEvents.size();
+        
+    }
+
     private void changeDirection(MovingObject mo, float[] rv) {
-        float k = (float) Math.sqrt(mo.absVel / (rv[0] * rv[0] + rv[1] * rv[1]));
+        float k = (float) Math.sqrt(mo.velNormSquare / (rv[0] * rv[0] + rv[1] * rv[1]));
         mo.velX = rv[0] * k;
         mo.velY = rv[1] * k;
         mo.angle = (float) Math.toDegrees(Math.atan2(mo.velY, mo.velX) + Math.PI / 2);
@@ -123,6 +140,6 @@ public class GameController {
     }
 
     void startRay() {
-        ray.absVel = 100000;
+        ray.velNormSquare = 62500;
     }
 }
