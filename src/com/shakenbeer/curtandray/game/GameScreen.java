@@ -118,6 +118,12 @@ public class GameScreen extends Screen {
             graphics.drawPixmap(mo.pixmap, (int) mo.translationX(), (int) mo.translationY(), (int) mo.posX,
                     (int) mo.posY, mo.angle);
         }
+        
+        len = controller.flags.size();
+        for (int i = 0; i < len; i++) {
+            StaticObject mo = controller.flags.get(i);
+            graphics.drawPixmap(mo.pixmap, (int) mo.translationX(), (int) mo.translationY());
+        }
 
     }
 
