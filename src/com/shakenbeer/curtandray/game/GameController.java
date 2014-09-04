@@ -8,7 +8,31 @@ import java.util.Queue;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
 
 public class GameController {
-    static final float TICK_INITIAL = 0.5f;
+
+    private static final int START_Y = 1070;
+    private static final int START_X = 478;
+    private static final int ARROW_RIGHT_Y = 1070;
+    private static final int ARROW_RIGHT_X = 180;
+    private static final int ARROW_LEFT_Y = 1070;
+    private static final int ARROW_LEFT_X = 30;
+    private static final int NEXT_LEVEL_Y = 0;
+    private static final int NEXT_LEVEL_X = 34;
+    private static final int PLAY_BOUND_BOTTOM = 1050;
+    private static final int PLAY_BOUND_TOP = 100;
+    private static final int FLAG_PIVOT_Y = 72;
+    private static final int FLAG_PIVOT_X = 9;
+    private static final int MINE_RADIUS = 32;
+    private static final int MINE_PIVOT_Y = 32;
+    private static final int MINE_PIVOT_X = 32;
+    private static final int TARGET_RADIUS = 25;
+    private static final int DEFAULT_CHAR_SPEED = 90000;
+    private static final int RAY_INIT_Y = 66;
+    private static final int RAY_INIT_X = 384;
+    private static final int CURT_INIT_Y = 1115;
+    private static final int CURT_INIT_X = 384;
+    private static final int CHAR_RADIUS = 32;
+    private static final int CHAR_PIVOT_Y = 66;
+    private static final int CHAR_PIVOT_X = 55;
 
     enum GameStage {
         Ray, RayHide, BuildPath, Curt, LevelStart, LevelPaused
@@ -16,6 +40,12 @@ public class GameController {
 
     GameStage stage = GameStage.LevelStart;
     int level;
+
+    final InterfaceObject nextLevel;
+    final InterfaceObject arrowLeft;
+    final InterfaceObject arrowRight;
+    final InterfaceObject start;
+
     final GameObject curt;
     final GameObject ray;
     final List<GameObject> chars;
@@ -28,10 +58,15 @@ public class GameController {
 
     public GameController(int level) {
         this.level = level;
-        
-        curt = new GameObject(55, 66, 32, Assets.INSTANCE.getCurt());
 
-        ray = new GameObject(55, 66, 32, Assets.INSTANCE.getRay());
+        nextLevel = new InterfaceObject(NEXT_LEVEL_X, NEXT_LEVEL_Y, Assets.INSTANCE.getNextLevel());
+        arrowLeft = new InterfaceObject(ARROW_LEFT_X, ARROW_LEFT_Y, Assets.INSTANCE.getButtonArrowLeft());
+        arrowRight = new InterfaceObject(ARROW_RIGHT_X, ARROW_RIGHT_Y, Assets.INSTANCE.getButtonArrowRight());
+        start = new InterfaceObject(START_X, START_Y, Assets.INSTANCE.getButtonArrowRight());
+
+        curt = new GameObject(CHAR_PIVOT_X, CHAR_PIVOT_Y, CHAR_RADIUS, Assets.INSTANCE.getCurt());
+
+        ray = new GameObject(CHAR_PIVOT_X, CHAR_PIVOT_Y, CHAR_RADIUS, Assets.INSTANCE.getRay());
 
         chars = new ArrayList<>();
         minePos = new LinkedList<int[]>();
@@ -41,11 +76,11 @@ public class GameController {
     }
 
     void initLevel() {
-        curt.posX = 384;
-        curt.posY = 1115;
+        curt.posX = CURT_INIT_X;
+        curt.posY = CURT_INIT_Y;
 
-        ray.posX = 384;
-        ray.posY = 66;
+        ray.posX = RAY_INIT_X;
+        ray.posY = RAY_INIT_Y;
 
         chars.add(curt);
         chars.add(ray);
@@ -63,7 +98,7 @@ public class GameController {
             if (touchEvents.size() > 0) {
                 initLevel();
                 stage = GameStage.Ray;
-                ray.velNormSqr = 90000;
+                ray.velNormSqr = DEFAULT_CHAR_SPEED;
             }
         }
         if (stage == GameStage.Ray) {
@@ -95,8 +130,8 @@ public class GameController {
             changeDirection(ray, rv);
         }
 
-        if (rv[0] * rv[0] + rv[1] * rv[1] < 25) {
-            GameObject mine = new GameObject(32, 32, 32, Assets.INSTANCE.getMine());
+        if (rv[0] * rv[0] + rv[1] * rv[1] < TARGET_RADIUS) {
+            GameObject mine = new GameObject(MINE_PIVOT_X, MINE_PIVOT_Y, MINE_RADIUS, Assets.INSTANCE.getMine());
             mine.posX = rayTarget[0];
             mine.posY = rayTarget[1];
             mines.add(mine);
@@ -114,11 +149,11 @@ public class GameController {
     }
 
     private void move(GameObject mo, float deltaTime) {
-		mo.posX += mo.velX * deltaTime;
-		mo.velY += mo.velY * deltaTime;
-	}
+        mo.posX += mo.velX * deltaTime;
+        mo.velY += mo.velY * deltaTime;
+    }
 
-	private void updateRayHideStage(float deltaTime) {
+    private void updateRayHideStage(float deltaTime) {
         float[] rv;
         GameObject mine;
 
@@ -131,7 +166,7 @@ public class GameController {
             changeDirection(ray, rv);
         }
 
-        if (rv[0] * rv[0] + rv[1] * rv[1] < 25) {
+        if (rv[0] * rv[0] + rv[1] * rv[1] < TARGET_RADIUS) {
             minePos.add(new int[] { rayTarget[0], rayTarget[1] });
             mines.remove(0);
             ray.posX = rayTarget[0];
@@ -154,8 +189,8 @@ public class GameController {
         for (int i = 0; i < len; i++) {
             TouchEvent event = touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP) {
-                if (event.y > 100 && event.y < 1050) {
-                    GameObject flag = new GameObject(9, 72, 0, Assets.INSTANCE.getFlag());
+                if (event.y > PLAY_BOUND_TOP && event.y < PLAY_BOUND_BOTTOM) {
+                    GameObject flag = new GameObject(FLAG_PIVOT_X, FLAG_PIVOT_Y, 0, Assets.INSTANCE.getFlag());
                     flag.posX = event.x;
                     flag.posY = event.y;
                     flags.add(flag);
@@ -164,7 +199,7 @@ public class GameController {
                     }
                     removed.clear();
                 }
-                if (inBounds(event, 30, 1070, 120, 100)) {
+                if (inBounds(event, arrowLeft)) {
                     if (!flags.isEmpty()) {
                         removed.add(flags.remove(flags.size() - 1));
                     }
@@ -172,7 +207,7 @@ public class GameController {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
                 }
-                if (inBounds(event, 180, 1070, 120, 100)) {
+                if (inBounds(event, arrowRight)) {
                     if (!removed.isEmpty()) {
                         flags.add(removed.remove(removed.size() - 1));
                     }
@@ -180,13 +215,14 @@ public class GameController {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
                 }
-                if (inBounds(event, 478, 1070, 250, 100)) {
-                    curt.velNormSqr = 90000;
+                if (inBounds(event, start)) {
+                    curt.velNormSqr = DEFAULT_CHAR_SPEED;
                     stage = GameStage.Curt;
                     int mCount = minePos.size();
                     for (int j = 0; j < mCount; j++) {
                         int[] pos = minePos.poll();
-                        GameObject mine = new GameObject(32, 32, 32, Assets.INSTANCE.getMine());
+                        GameObject mine = new GameObject(MINE_PIVOT_X, MINE_PIVOT_Y, MINE_RADIUS,
+                                Assets.INSTANCE.getMine());
                         mine.posX = pos[0];
                         mine.posY = pos[1];
                         mines.add(mine);
@@ -217,14 +253,14 @@ public class GameController {
             changeDirection(curt, rv);
         }
 
-        if (rv[0] * rv[0] + rv[1] * rv[1] < 25) {
+        if (rv[0] * rv[0] + rv[1] * rv[1] < TARGET_RADIUS) {
             curt.posX = curtTarget[0];
             curt.posY = curtTarget[1];
             flags.remove(0);
             curtTarget = null;
         }
 
-        if (curt.posY < 61) {
+        if (curt.posY < -curt.pixmap.getHeight()) {
             curt.velNormSqr = 0;
             chars.remove(curt);
             level++;
@@ -238,12 +274,24 @@ public class GameController {
     }
 
     private void checkCollisions() {
-        // TODO Auto-generated method stub
+        int len = mines.size();
+        for (int i = 0; i < len; i++) {
+            GameObject mine = mines.get(i);
+            if (checkCollision(curt, mine)) {
+                stage = GameStage.LevelStart;
+            }
+        }
 
     }
 
-    private boolean inBounds(TouchEvent event, int x, int y, int width, int height) {
-        if (event.x > x && event.x < x + width - 1 && event.y > y && event.y < y + height - 1)
+    public boolean checkCollision(GameObject go1, GameObject go2) {
+        float distSqr = (go1.posX - go2.posX) * (go1.posX - go2.posX) + (go1.posY - go2.posY) * (go1.posY - go2.posY);
+        return (distSqr < (go1.radius + go2.radius) * (go1.radius + go2.radius));
+    }
+
+    private boolean inBounds(TouchEvent event, InterfaceObject io) {
+        if (event.x > io.x && event.x < io.x + io.pixmap.getWidth() - 1 && event.y > io.y
+                && event.y < io.y + io.pixmap.getHeight() - 1)
             return true;
         else
             return false;
