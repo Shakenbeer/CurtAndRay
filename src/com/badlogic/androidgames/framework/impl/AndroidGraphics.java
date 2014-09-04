@@ -117,7 +117,11 @@ public class AndroidGraphics implements Graphics {
         matrix.setTranslate(dx, dy);
         matrix.postRotate(angle, centerX, centerY);
         canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, matrix, null);
-        
+    }
+    
+    @Override
+    public void drawPixmap(Pixmap pixmap, Rect src, Rect dst) {
+        canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, src, dst, null);        
     }
 
     public int getWidth() {
@@ -130,6 +134,6 @@ public class AndroidGraphics implements Graphics {
 
     @Override
     public void testDraw() {
-        
+
     }
 }
