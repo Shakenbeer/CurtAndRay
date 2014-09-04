@@ -115,27 +115,27 @@ public class GameScreen extends Screen {
         
         graphics.drawPixmap(Assets.INSTANCE.getBackground(), 0, 0);
         graphics.drawPixmap(Assets.INSTANCE.getNextLevel(), 34, 0);
-        graphics.drawPixmap(Assets.INSTANCE.getButtonPause(), 0, 0);
+//        graphics.drawPixmap(Assets.INSTANCE.getButtonPause(), 0, 0);
         graphics.drawPixmap(Assets.INSTANCE.getButtonArrowLeft(), 30, 1070);
         graphics.drawPixmap(Assets.INSTANCE.getButtonArrowRight(), 180, 1070);
         graphics.drawPixmap(Assets.INSTANCE.getButtonStart(), 478, 1070);
 
         int len = controller.mines.size();
         for (int i = 0; i < len; i++) {
-            StaticObject mo = controller.mines.get(i);
+            GameObject mo = controller.mines.get(i);
             graphics.drawPixmap(mo.pixmap, (int) mo.translationX(), (int) mo.translationY());
         }
 
         len = controller.chars.size();
         for (int i = 0; i < len; i++) {
-            MovingObject mo = controller.chars.get(i);
+            GameObject mo = controller.chars.get(i);
             graphics.drawPixmap(mo.pixmap, (int) mo.translationX(), (int) mo.translationY(), (int) mo.posX,
                     (int) mo.posY, mo.angle);
         }
         
         len = controller.flags.size();
         for (int i = 0; i < len; i++) {
-            StaticObject mo = controller.flags.get(i);
+            GameObject mo = controller.flags.get(i);
             graphics.drawPixmap(mo.pixmap, (int) mo.translationX(), (int) mo.translationY());
         }
 

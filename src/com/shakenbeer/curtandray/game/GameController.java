@@ -16,37 +16,28 @@ public class GameController {
 
     GameStage stage = GameStage.LevelStart;
     int level;
-    final MovingObject curt;
-    final MovingObject ray;
-    final List<MovingObject> chars;
-    final List<StaticObject> mines;
-    final List<StaticObject> flags;
-    final List<StaticObject> removed;
+    final GameObject curt;
+    final GameObject ray;
+    final List<GameObject> chars;
+    final List<GameObject> mines;
+    final List<GameObject> flags;
+    final List<GameObject> removed;
     Queue<int[]> minePos;
     int[] rayTarget;
     int[] curtTarget;
-    ImageInfo mineImage = new ImageInfo(32, 32, 64, 64, 32);
-    ImageInfo flagImage = new ImageInfo(9, 72, 62, 80, 32);
 
     public GameController(int level) {
         this.level = level;
         
-        ImageInfo info = new ImageInfo(55, 66, 110, 122, 32);
+        curt = new GameObject(55, 66, 32, Assets.INSTANCE.getCurt());
 
-        curt = new MovingObject(384, 1115, 0, 0, 0, info);
-        curt.imageInfo = info;
-        curt.pixmap = Assets.INSTANCE.getCurt();
-
-        ray = new MovingObject(384, 66, 0, 0, 180, info);
-        ray.imageInfo = info;
-        ray.pixmap = Assets.INSTANCE.getRay();
+        ray = new GameObject(55, 66, 32, Assets.INSTANCE.getRay());
 
         chars = new ArrayList<>();
-
         minePos = new LinkedList<int[]>();
-        mines = new LinkedList<StaticObject>();
-        flags = new ArrayList<StaticObject>();
-        removed = new ArrayList<StaticObject>();
+        mines = new LinkedList<GameObject>();
+        flags = new ArrayList<GameObject>();
+        removed = new ArrayList<GameObject>();
     }
 
     void initLevel() {
@@ -72,7 +63,7 @@ public class GameController {
             if (touchEvents.size() > 0) {
                 initLevel();
                 stage = GameStage.Ray;
-                ray.velNormSquare = 90000;
+                ray.velNormSqr = 90000;
             }
         }
         if (stage == GameStage.Ray) {
@@ -105,8 +96,9 @@ public class GameController {
         }
 
         if (rv[0] * rv[0] + rv[1] * rv[1] < 25) {
-            StaticObject mine = new StaticObject(rayTarget[0], rayTarget[1], mineImage);
-            mine.pixmap = Assets.INSTANCE.getMine();
+            GameObject mine = new GameObject(32, 32, 32, Assets.INSTANCE.getMine());
+            mine.posX = rayTarget[0];
+            mine.posY = rayTarget[1];
             mines.add(mine);
             ray.posX = rayTarget[0];
             ray.posY = rayTarget[1];
@@ -118,18 +110,23 @@ public class GameController {
                 stage = GameStage.RayHide;
             }
         }
-        ray.move(deltaTime);
+        move(ray, deltaTime);
     }
 
-    private void updateRayHideStage(float deltaTime) {
+    private void move(GameObject mo, float deltaTime) {
+		mo.posX += mo.velX * deltaTime;
+		mo.velY += mo.velY * deltaTime;
+	}
+
+	private void updateRayHideStage(float deltaTime) {
         float[] rv;
-        StaticObject mine;
+        GameObject mine;
 
         if (rayTarget != null) {
             rv = directionVector(ray, rayTarget);
         } else {
             mine = mines.get(0);
-            rayTarget = new int[] { mine.posX, mine.posY };
+            rayTarget = new int[] { (int) mine.posX, (int) mine.posY };
             rv = directionVector(ray, rayTarget);
             changeDirection(ray, rv);
         }
@@ -144,12 +141,12 @@ public class GameController {
                 Assets.INSTANCE.getSoundHideMine().play(1);
             }
             if (mines.isEmpty()) {
-                ray.velNormSquare = 0;
+                ray.velNormSqr = 0;
                 chars.remove(ray);
                 stage = GameStage.BuildPath;
             }
         }
-        ray.move(deltaTime);
+        move(ray, deltaTime);
     }
 
     private void updateBuildPathStage(List<TouchEvent> touchEvents, float deltaTime) {
@@ -158,8 +155,9 @@ public class GameController {
             TouchEvent event = touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP) {
                 if (event.y > 100 && event.y < 1050) {
-                    StaticObject flag = new StaticObject(event.x, event.y, flagImage);
-                    flag.pixmap = Assets.INSTANCE.getFlag();
+                    GameObject flag = new GameObject(9, 72, 0, Assets.INSTANCE.getFlag());
+                    flag.posX = event.x;
+                    flag.posY = event.y;
                     flags.add(flag);
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundSetupFlag().play(1);
@@ -183,13 +181,14 @@ public class GameController {
                     }
                 }
                 if (inBounds(event, 478, 1070, 250, 100)) {
-                    curt.velNormSquare = 90000;
+                    curt.velNormSqr = 90000;
                     stage = GameStage.Curt;
                     int mCount = minePos.size();
                     for (int j = 0; j < mCount; j++) {
                         int[] pos = minePos.poll();
-                        StaticObject mine = new StaticObject(pos[0], pos[1], mineImage);
-                        mine.pixmap = Assets.INSTANCE.getMine();
+                        GameObject mine = new GameObject(32, 32, 32, Assets.INSTANCE.getMine());
+                        mine.posX = pos[0];
+                        mine.posY = pos[1];
                         mines.add(mine);
                     }
                     if (Settings.soundEnabled) {
@@ -209,8 +208,8 @@ public class GameController {
             rv = directionVector(curt, curtTarget);
         } else {
             if (!flags.isEmpty()) {
-                StaticObject flag = flags.get(0);
-                curtTarget = new int[] { flag.posX, flag.posY };
+                GameObject flag = flags.get(0);
+                curtTarget = new int[] { (int) flag.posX, (int) flag.posY };
             } else {
                 curtTarget = new int[] { (int) curt.posX, -200 };
             }
@@ -226,7 +225,7 @@ public class GameController {
         }
 
         if (curt.posY < 61) {
-            curt.velNormSquare = 0;
+            curt.velNormSqr = 0;
             chars.remove(curt);
             level++;
             stage = GameStage.LevelStart;
@@ -235,7 +234,7 @@ public class GameController {
             }
         }
 
-        curt.move(deltaTime);
+        move(curt, deltaTime);
     }
 
     private void checkCollisions() {
@@ -250,14 +249,14 @@ public class GameController {
             return false;
     }
 
-    private void changeDirection(MovingObject mo, float[] rv) {
-        float k = (float) Math.sqrt(mo.velNormSquare / (rv[0] * rv[0] + rv[1] * rv[1]));
+    private void changeDirection(GameObject mo, float[] rv) {
+        float k = (float) Math.sqrt(mo.velNormSqr / (rv[0] * rv[0] + rv[1] * rv[1]));
         mo.velX = rv[0] * k;
         mo.velY = rv[1] * k;
         mo.angle = (float) Math.toDegrees(Math.atan2(mo.velY, mo.velX) + Math.PI / 2);
     }
 
-    private float[] directionVector(MovingObject mo, int[] target) {
+    private float[] directionVector(GameObject mo, int[] target) {
         return new float[] { target[0] - mo.posX, target[1] - mo.posY };
     }
 }
