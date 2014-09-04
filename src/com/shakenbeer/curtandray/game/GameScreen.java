@@ -6,6 +6,7 @@ import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
 import com.badlogic.androidgames.framework.Screen;
+import com.shakenbeer.curtandray.game.GameController.GameStage;
 
 public class GameScreen extends Screen {
 
@@ -16,9 +17,9 @@ public class GameScreen extends Screen {
     GameState state = GameState.Ready;
     GameController controller;
 
-    public GameScreen(Game game) {
+    public GameScreen(Game game, int level) {
         super(game);
-        controller = new GameController();
+        controller = new GameController(level);
     }
 
     @Override
@@ -39,16 +40,18 @@ public class GameScreen extends Screen {
     private void updateReady(List<TouchEvent> touchEvents) {
         if (touchEvents.size() > 0) {
             if (Settings.soundEnabled) {
+                state = GameState.Running;
                 Assets.INSTANCE.getSoundClick().play(1);
             }
-            state = GameState.Running;
-            controller.startRay();
+            controller.update(touchEvents, 0);
         }
     }
 
     private void updateRunning(List<TouchEvent> touchEvents, float deltaTime) {
         controller.update(touchEvents, deltaTime);
-
+        if (controller.stage == GameStage.LevelStart) {
+            state = GameState.Ready;
+        }
     }
 
     private void updatePaused(List<TouchEvent> touchEvents) {
@@ -78,8 +81,19 @@ public class GameScreen extends Screen {
 
     private void drawReadyUI() {
         Graphics graphics = game.getGraphics();
-        graphics.drawPixmap(Assets.INSTANCE.getScreenLevel(), 184, 450);
+        graphics.drawPixmap(Assets.INSTANCE.getScreenLevel(), 84, 400);
+        drawText(graphics, String.valueOf(controller.level), 492, 435);
 
+    }
+    
+    public void drawText(Graphics g, String line, int x, int y) {
+        int len = line.length();
+        for (int i = 0; i < len; i++) {
+            char character = line.charAt(i);            
+            int n = character - '0';            
+            g.drawPixmap(Assets.INSTANCE.getDigits(), x, y, n * 82, 0, 82, 130);
+            x += 82;
+        }
     }
 
     private void drawRunningUI() {
@@ -129,7 +143,8 @@ public class GameScreen extends Screen {
 
     @Override
     public void pause() {
-        // TODO Auto-generated method stub
+        Settings.level = controller.level;
+        Settings.save(game.getFileIO());
 
     }
 

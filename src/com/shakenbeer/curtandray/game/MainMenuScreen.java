@@ -32,7 +32,7 @@ public class MainMenuScreen extends Screen {
                     return;
                 }
                 if (inBounds(event, 134, 600, 500, 200)) {
-                    game.setScreen(new GameScreen(game));
+                    game.setScreen(new LevelsScreen(game));
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }

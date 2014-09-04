@@ -10,6 +10,7 @@ import com.badlogic.androidgames.framework.FileIO;
 
 public class Settings {
     public static boolean soundEnabled = true;
+    public static int level = 1;
     
     public static void load(FileIO files) {
         BufferedReader in = null;
@@ -17,6 +18,7 @@ public class Settings {
             in = new BufferedReader(new InputStreamReader(
                     files.readFile(".curdandray")));
             soundEnabled = Boolean.parseBoolean(in.readLine());
+            level = Integer.parseInt(in.readLine());
         } catch (IOException e) {
             // :( It's ok we have defaults
         } finally {
@@ -34,6 +36,7 @@ public class Settings {
             out = new BufferedWriter(new OutputStreamWriter(
                     files.writeFile(".mrnom")));
             out.write(Boolean.toString(soundEnabled));
+            out.write(Integer.toString(level));
         } catch (IOException e) {
         } finally {
             try {

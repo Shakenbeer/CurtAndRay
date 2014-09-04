@@ -5,19 +5,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import android.util.Log;
-
 import com.badlogic.androidgames.framework.Input.TouchEvent;
 
 public class GameController {
     static final float TICK_INITIAL = 0.5f;
 
     enum GameStage {
-        Ray, RayHide, BuildPath, Curt, LevelCompleted, LevelStarted, LevelPaused
+        Ray, RayHide, BuildPath, Curt, LevelStart, LevelPaused
     }
 
-    GameStage stage = GameStage.Ray;
-    int level = 1;
+    GameStage stage = GameStage.LevelStart;
+    int level;
     final MovingObject curt;
     final MovingObject ray;
     final List<MovingObject> chars;
@@ -30,7 +28,9 @@ public class GameController {
     ImageInfo mineImage = new ImageInfo(32, 32, 64, 64, 32);
     ImageInfo flagImage = new ImageInfo(9, 72, 62, 80, 32);
 
-    public GameController() {
+    public GameController(int level) {
+        this.level = level;
+        
         ImageInfo info = new ImageInfo(55, 66, 110, 122, 32);
 
         curt = new MovingObject(384, 1115, 0, 0, 0, info);
@@ -42,16 +42,39 @@ public class GameController {
         ray.pixmap = Assets.INSTANCE.getRay();
 
         chars = new ArrayList<>();
-        chars.add(curt);
-        chars.add(ray);
 
+        minePos = new LinkedList<int[]>();
         mines = new LinkedList<StaticObject>();
-        generateMines();
         flags = new ArrayList<StaticObject>();
         removed = new ArrayList<StaticObject>();
     }
 
+    void initLevel() {
+        curt.posX = 384;
+        curt.posY = 1115;
+
+        ray.posX = 384;
+        ray.posY = 66;
+
+        chars.add(curt);
+        chars.add(ray);
+
+        minePos.clear();
+        mines.clear();
+        flags.clear();
+        removed.clear();
+
+        generateMines();
+    }
+
     public void update(List<TouchEvent> touchEvents, float deltaTime) {
+        if (stage == GameStage.LevelStart) {
+            if (touchEvents.size() > 0) {
+                initLevel();
+                stage = GameStage.Ray;
+                ray.velNormSquare = 90000;
+            }
+        }
         if (stage == GameStage.Ray) {
             updateRayStage(deltaTime);
         } else if (stage == GameStage.RayHide) {
@@ -65,7 +88,6 @@ public class GameController {
     }
 
     private void generateMines() {
-        minePos = new LinkedList<int[]>();
         minePos.add(new int[] { 100, 200 });
         minePos.add(new int[] { 100, 800 });
         minePos.add(new int[] { 524, 376 });
@@ -161,7 +183,7 @@ public class GameController {
                     }
                 }
                 if (inBounds(event, 478, 1070, 250, 100)) {
-                    startCurt();
+                    curt.velNormSquare = 90000;
                     stage = GameStage.Curt;
                     int mCount = minePos.size();
                     for (int j = 0; j < mCount; j++) {
@@ -206,7 +228,11 @@ public class GameController {
         if (curt.posY < 61) {
             curt.velNormSquare = 0;
             chars.remove(curt);
-            stage = GameStage.LevelCompleted;
+            level++;
+            stage = GameStage.LevelStart;
+            if (Settings.soundEnabled) {
+                Assets.INSTANCE.getSoundWin().play(1);
+            }
         }
 
         curt.move(deltaTime);
@@ -215,14 +241,6 @@ public class GameController {
     private void checkCollisions() {
         // TODO Auto-generated method stub
 
-    }
-
-    void startRay() {
-        ray.velNormSquare = 90000;
-    }
-
-    void startCurt() {
-        curt.velNormSquare = 90000;
     }
 
     private boolean inBounds(TouchEvent event, int x, int y, int width, int height) {
