@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Scanner;
 
+import android.util.Log;
+
+import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
 
 public class GameController {
@@ -24,8 +28,8 @@ public class GameController {
     private static final int MINE_RADIUS = 32;
     private static final int MINE_PIVOT_Y = 32;
     private static final int MINE_PIVOT_X = 32;
-    private static final int TARGET_RADIUS = 25;
-    private static final int DEFAULT_CHAR_SPEED = 90000;
+    private static final int TARGET_RADIUS = 100;
+    private static final int DEFAULT_CHAR_SPEED = 120000;
     private static final int RAY_INIT_Y = 66;
     private static final int RAY_INIT_X = 384;
     private static final int CURT_INIT_Y = 1115;
@@ -39,12 +43,16 @@ public class GameController {
     }
 
     GameStage stage = GameStage.LevelStart;
+    GameStage beforePause;
+
+    Game game;
     int level;
 
     final InterfaceObject nextLevel;
     final InterfaceObject arrowLeft;
     final InterfaceObject arrowRight;
     final InterfaceObject start;
+    final InterfaceObject pause;
 
     final GameObject curt;
     final GameObject ray;
@@ -56,13 +64,15 @@ public class GameController {
     int[] rayTarget;
     int[] curtTarget;
 
-    public GameController(int level) {
+    public GameController(Game game, int level) {
+        this.game = game;
         this.level = level;
 
         nextLevel = new InterfaceObject(NEXT_LEVEL_X, NEXT_LEVEL_Y, Assets.INSTANCE.getNextLevel());
         arrowLeft = new InterfaceObject(ARROW_LEFT_X, ARROW_LEFT_Y, Assets.INSTANCE.getButtonArrowLeft());
         arrowRight = new InterfaceObject(ARROW_RIGHT_X, ARROW_RIGHT_Y, Assets.INSTANCE.getButtonArrowRight());
-        start = new InterfaceObject(START_X, START_Y, Assets.INSTANCE.getButtonArrowRight());
+        start = new InterfaceObject(START_X, START_Y, Assets.INSTANCE.getButtonStart());
+        pause = new InterfaceObject(0, 0, Assets.INSTANCE.getButtonPause());
 
         curt = new GameObject(CHAR_PIVOT_X, CHAR_PIVOT_Y, CHAR_RADIUS, Assets.INSTANCE.getCurt());
 
@@ -73,14 +83,18 @@ public class GameController {
         mines = new LinkedList<GameObject>();
         flags = new ArrayList<GameObject>();
         removed = new ArrayList<GameObject>();
+
+        initLevel();
     }
 
     void initLevel() {
         curt.posX = CURT_INIT_X;
         curt.posY = CURT_INIT_Y;
+        curt.angle = 0;
 
         ray.posX = RAY_INIT_X;
         ray.posY = RAY_INIT_Y;
+        ray.angle = 180;
 
         chars.add(curt);
         chars.add(ray);
@@ -90,15 +104,47 @@ public class GameController {
         flags.clear();
         removed.clear();
 
-        generateMines();
+        curtTarget = null;
+        rayTarget = null;
+
+        loadMines();
+    }
+    
+    private void loadMines() {
+
+        String levelString = Assets.INSTANCE.getLevels().get(level - 1);
+
+        String[] levelArray = levelString.split(",");
+
+        int len = levelArray.length - levelArray.length % 2;
+
+        for (int i = 0; i < len;) {
+            int x = Integer.parseInt(levelArray[i++]);
+            int y = Integer.parseInt(levelArray[i++]);
+            minePos.add(new int[] { x, y });
+        }
     }
 
     public void update(List<TouchEvent> touchEvents, float deltaTime) {
         if (stage == GameStage.LevelStart) {
             if (touchEvents.size() > 0) {
-                initLevel();
+                if (Settings.soundEnabled) {
+                    Assets.INSTANCE.getSoundClick().play(1);
+                }
                 stage = GameStage.Ray;
                 ray.velNormSqr = DEFAULT_CHAR_SPEED;
+            }
+        }
+        if (stage != GameStage.LevelStart) {
+            int len = touchEvents.size();
+            for (int i = 0; i < len; i++) {
+                TouchEvent event = touchEvents.get(i);
+                if (event.type == TouchEvent.TOUCH_UP) {
+                    if (inBounds(event, pause)) {
+                        beforePause = stage;
+                        stage = GameStage.LevelPaused;
+                    }
+                }
             }
         }
         if (stage == GameStage.Ray) {
@@ -110,13 +156,27 @@ public class GameController {
         } else if (stage == GameStage.Curt) {
             updateCurtStage(deltaTime);
         }
+        if (stage == GameStage.LevelPaused) {
+            updateStatePaused(touchEvents);
+        }
 
     }
 
-    private void generateMines() {
-        minePos.add(new int[] { 100, 200 });
-        minePos.add(new int[] { 100, 800 });
-        minePos.add(new int[] { 524, 376 });
+    private void updateStatePaused(List<TouchEvent> touchEvents) {
+        int len = touchEvents.size();
+        for (int i = 0; i < len; i++) {
+            TouchEvent event = touchEvents.get(i);
+            if (event.type == TouchEvent.TOUCH_UP) {
+                if (event.x > 182 && event.x < 582 - 1 && event.y > 450 && event.y < 600 - 1) {
+                    stage = beforePause;
+                }
+
+                if (event.x > 182 && event.x < 582 - 1 && event.y > 600 && event.y < 750 - 1) {
+                    game.setScreen(new MainMenuScreen(game));
+                }
+            }
+        }
+
     }
 
     private void updateRayStage(float deltaTime) {
@@ -146,11 +206,6 @@ public class GameController {
             }
         }
         move(ray, deltaTime);
-    }
-
-    private void move(GameObject mo, float deltaTime) {
-        mo.posX += mo.velX * deltaTime;
-        mo.velY += mo.velY * deltaTime;
     }
 
     private void updateRayHideStage(float deltaTime) {
@@ -216,8 +271,9 @@ public class GameController {
                     }
                 }
                 if (inBounds(event, start)) {
-                    curt.velNormSqr = DEFAULT_CHAR_SPEED;
-                    stage = GameStage.Curt;
+                    if (Settings.soundEnabled) {
+                        Assets.INSTANCE.getSoundClick().play(1);
+                    }
                     int mCount = minePos.size();
                     for (int j = 0; j < mCount; j++) {
                         int[] pos = minePos.poll();
@@ -227,9 +283,8 @@ public class GameController {
                         mine.posY = pos[1];
                         mines.add(mine);
                     }
-                    if (Settings.soundEnabled) {
-                        Assets.INSTANCE.getSoundClick().play(1);
-                    }
+                    stage = GameStage.Curt;
+                    curt.velNormSqr = DEFAULT_CHAR_SPEED;
                 }
             }
         }
@@ -239,7 +294,6 @@ public class GameController {
     private void updateCurtStage(float deltaTime) {
         float[] rv;
 
-        checkCollisions();
         if (curtTarget != null) {
             rv = directionVector(curt, curtTarget);
         } else {
@@ -265,26 +319,37 @@ public class GameController {
             chars.remove(curt);
             level++;
             stage = GameStage.LevelStart;
+            initLevel();
             if (Settings.soundEnabled) {
                 Assets.INSTANCE.getSoundWin().play(1);
             }
         }
 
         move(curt, deltaTime);
+        
+        if (checkCollisions()) {
+            stage = GameStage.LevelStart;
+            initLevel();
+        }
     }
 
-    private void checkCollisions() {
+    private void move(GameObject mo, float deltaTime) {
+        mo.posX += mo.velX * deltaTime;
+        mo.posY += mo.velY * deltaTime;
+    }
+    
+    private boolean checkCollisions() {
         int len = mines.size();
         for (int i = 0; i < len; i++) {
             GameObject mine = mines.get(i);
-            if (checkCollision(curt, mine)) {
-                stage = GameStage.LevelStart;
+            if (collide(curt, mine)) {
+                return true;
             }
         }
-
+        return false;
     }
 
-    public boolean checkCollision(GameObject go1, GameObject go2) {
+    public boolean collide(GameObject go1, GameObject go2) {
         float distSqr = (go1.posX - go2.posX) * (go1.posX - go2.posX) + (go1.posY - go2.posY) * (go1.posY - go2.posY);
         return (distSqr < (go1.radius + go2.radius) * (go1.radius + go2.radius));
     }

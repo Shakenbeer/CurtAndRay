@@ -1,5 +1,7 @@
 package com.shakenbeer.curtandray.game;
 
+import java.util.List;
+
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
@@ -36,6 +38,8 @@ public enum Assets {
     private Sound soundSetupFlag;
     private Sound soundSetupMine;
     private Sound soundWin;
+    
+    private List<String> levels;
 
     public Pixmap getButtonArrowLeft() {
         return buttonArrowLeft;
@@ -268,5 +272,15 @@ public enum Assets {
     public void setSoundWin(Sound soundWin) {
         this.soundWin = soundWin;
     }
+
+    public List<String> getLevels() {
+        return levels;
+    }
+
+    public void setLevels(List<String> levels) {
+        this.levels = levels;
+    }
+    
+    
 
 }

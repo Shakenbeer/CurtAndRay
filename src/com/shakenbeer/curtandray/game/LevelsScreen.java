@@ -3,20 +3,17 @@ package com.shakenbeer.curtandray.game;
 import java.util.List;
 
 import android.graphics.Rect;
-import android.util.Log;
 
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
-import com.badlogic.androidgames.framework.Screen;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
+import com.badlogic.androidgames.framework.Screen;
 
 public class LevelsScreen extends Screen {
-    
-    int level;
+
 
     public LevelsScreen(Game game) {
         super(game);
-        level = Settings.level;
     }
 
     @Override
@@ -27,12 +24,12 @@ public class LevelsScreen extends Screen {
         
         for (int i = 0; i < len; i++) {
             TouchEvent event = touchEvents.get(i);
-            if (inBounds(event, 54, 40, 656, 980)) {
+            if (event.type == TouchEvent.TOUCH_UP && inBounds(event, 54, 40, 656, 980)) {
                 int selected = (event.y - 40) / 140 * 4 + (event.x - 54) / 164 + 1;
                 if (Settings.soundEnabled) {
                     Assets.INSTANCE.getSoundClick().play(1);
                 }
-                if (Settings.level <= selected) {
+                if (selected <= Settings.level) {
                     game.setScreen(new GameScreen(game, selected));
                 }
             };
@@ -47,10 +44,10 @@ public class LevelsScreen extends Screen {
         
         graphics.drawPixmap(Assets.INSTANCE.getBackground(), 0, 0);
         
-        for (int i = 0; i < level; i++) {
+        for (int i = 0; i < Settings.level; i++) {
             graphics.drawPixmap(Assets.INSTANCE.getLevelNum(), i % 4 * 164 + 54, i / 4 * 140 + 40);
         }
-        for (int i = level; i < 28; i++) {
+        for (int i = Settings.level; i < 28; i++) {
             graphics.drawPixmap(Assets.INSTANCE.getLevelNumClosed(), i % 4 * 164 + 54, i / 4 * 140 + 40);
         }
         

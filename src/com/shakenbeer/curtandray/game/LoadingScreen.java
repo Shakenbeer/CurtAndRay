@@ -1,6 +1,12 @@
 package com.shakenbeer.curtandray.game;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.io.IOUtils;
+
 import com.badlogic.androidgames.framework.Audio;
+import com.badlogic.androidgames.framework.FileIO;
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Graphics.PixmapFormat;
@@ -55,9 +61,28 @@ public class LoadingScreen extends Screen {
         assets.setSoundSetupMine(a.newSound("setup_mine.ogg"));
         assets.setSoundWin(a.newSound("win.ogg"));
         
-        Settings.load(game.getFileIO());
+        FileIO fio = game.getFileIO();
+        
+        Settings.load(fio);
+        
+        InputStream in = null;
+        try {
+            in = fio.readAsset("levels");
+            Assets.INSTANCE.setLevels(IOUtils.readLines(in));
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't load levels from asset");
+        } finally {
+            if (in != null) {
+                IOUtils.closeQuietly(in);
+            }
+        }
+        
+        
+        
         
         game.setScreen(new MainMenuScreen(game));
+        
+        
     }
 
     @Override
