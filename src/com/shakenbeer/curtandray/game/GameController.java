@@ -10,6 +10,7 @@ import com.badlogic.androidgames.framework.Input.TouchEvent;
 
 public class GameController {
 
+    private static final int HIDED_OPACITY = 90;
     private static final int START_Y = 1070;
     private static final int START_X = 478;
     private static final int ARROW_RIGHT_Y = 1070;
@@ -36,7 +37,7 @@ public class GameController {
     private static final int CHAR_PIVOT_X = 55;
 
     enum GameStage {
-        Ray, RayHide, BuildPath, Curt, LevelStart, LevelPaused
+        Ray, RayHide, BuildPath, Curt, LevelStart, LevelPaused, LevelFailed
     }
 
     GameStage stage = GameStage.LevelStart;
@@ -78,8 +79,8 @@ public class GameController {
         chars = new ArrayList<>();
         minePos = new LinkedList<int[]>();
         mines = new LinkedList<GameObject>();
-        flags = new ArrayList<GameObject>();
-        removed = new ArrayList<GameObject>();
+        flags = new LinkedList<GameObject>();
+        removed = new LinkedList<GameObject>();
 
         initLevel();
     }
@@ -220,16 +221,19 @@ public class GameController {
 
         if (rv[0] * rv[0] + rv[1] * rv[1] < TARGET_RADIUS) {
             minePos.add(new int[] { rayTarget[0], rayTarget[1] });
-            mines.remove(0);
+            mine = mines.remove(0);
+            mine.opacity = HIDED_OPACITY;
+            mines.add(mine);
             ray.posX = rayTarget[0];
             ray.posY = rayTarget[1];
             rayTarget = null;
             if (Settings.soundEnabled) {
                 Assets.INSTANCE.getSoundHideMine().play(1);
             }
-            if (mines.isEmpty()) {
+            if (mines.get(0).opacity == HIDED_OPACITY) {
                 ray.velNormSqr = 0;
                 chars.remove(ray);
+                mines.clear();
                 stage = GameStage.BuildPath;
             }
         }

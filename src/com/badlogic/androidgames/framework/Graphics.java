@@ -21,6 +21,8 @@ public interface Graphics {
     public void drawPixmap(Pixmap pixmap, int x, int y, int srcX, int srcY, int srcWidth, int srcHeight);
 
     public void drawPixmap(Pixmap pixmap, int x, int y);
+    
+    public void drawPixmap(Pixmap pixmap, int x, int y, int alpha);
 
     public void drawPixmap(Pixmap pixmap, int dx, int dy, int centerX, int centerY, float angle);
     

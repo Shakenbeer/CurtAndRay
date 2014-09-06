@@ -14,6 +14,8 @@ public class GameObject {
     float velY;
     float velNormSqr;
     float angle;
+    
+    int opacity = 255;
 
     public GameObject(int pivotX, int pivotY, int radius, Pixmap pixmap) {
 		this.pivotX = pivotX;

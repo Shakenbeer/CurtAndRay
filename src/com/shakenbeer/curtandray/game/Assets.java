@@ -32,6 +32,7 @@ public enum Assets {
     private Pixmap buttonPause;
     private Pixmap levelNum;
     private Pixmap levelNumClosed;
+    private Pixmap levelFailed;
 
     private Sound soundClick;
     private Sound soundHideMine;
@@ -177,22 +178,6 @@ public enum Assets {
         this.background = background;
     }
 
-    public Pixmap getLevelNum() {
-        return levelNum;
-    }
-
-    public void setLevelNum(Pixmap levelNum) {
-        this.levelNum = levelNum;
-    }
-
-    public Pixmap getLevelNumClosed() {
-        return levelNumClosed;
-    }
-
-    public void setLevelNumClosed(Pixmap levelNumClosed) {
-        this.levelNumClosed = levelNumClosed;
-    }
-
     public Pixmap getButtonSoundOn() {
         return buttonSoundOn;
     }
@@ -231,6 +216,30 @@ public enum Assets {
 
     public void setButtonPause(Pixmap buttonPause) {
         this.buttonPause = buttonPause;
+    }
+
+    public Pixmap getLevelNum() {
+        return levelNum;
+    }
+
+    public void setLevelNum(Pixmap levelNum) {
+        this.levelNum = levelNum;
+    }
+
+    public Pixmap getLevelNumClosed() {
+        return levelNumClosed;
+    }
+
+    public void setLevelNumClosed(Pixmap levelNumClosed) {
+        this.levelNumClosed = levelNumClosed;
+    }
+
+    public Pixmap getLevelFailed() {
+        return levelFailed;
+    }
+
+    public void setLevelFailed(Pixmap levelFailed) {
+        this.levelFailed = levelFailed;
     }
 
     public Sound getSoundClick() {
@@ -279,8 +288,7 @@ public enum Assets {
 
     public void setLevels(List<String> levels) {
         this.levels = levels;
-    }
-    
-    
+    }    
 
+    
 }

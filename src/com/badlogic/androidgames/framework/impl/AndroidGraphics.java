@@ -21,7 +21,7 @@ public class AndroidGraphics implements Graphics {
     AssetManager assets;
     Bitmap frameBuffer;
     Canvas canvas;
-    Paint paint, p;
+    Paint paint, opacity;
     Matrix matrix;
     Rect srcRect = new Rect();
     Rect dstRect = new Rect();
@@ -31,7 +31,7 @@ public class AndroidGraphics implements Graphics {
         this.frameBuffer = frameBuffer;
         this.canvas = new Canvas(frameBuffer);
         this.paint = new Paint();
-        this.p = new Paint();
+        this.opacity = new Paint();
         this.matrix = new Matrix();
     }
 
@@ -111,6 +111,13 @@ public class AndroidGraphics implements Graphics {
 
     public void drawPixmap(Pixmap pixmap, int x, int y) {
         canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, x, y, null);
+    }
+    
+    @Override
+    public void drawPixmap(Pixmap pixmap, int x, int y, int alpha) {
+        opacity.setAlpha(alpha);
+        canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, x, y, opacity);
+        
     }
 
     public void drawPixmap(Pixmap pixmap, int dx, int dy, int centerX, int centerY, float angle) {

@@ -69,7 +69,7 @@ public class GameScreen extends Screen {
         int len = controller.mines.size();
         for (int i = 0; i < len; i++) {
             GameObject mo = controller.mines.get(i);
-            graphics.drawPixmap(mo.pixmap, (int) mo.translationX(), (int) mo.translationY());
+            graphics.drawPixmap(mo.pixmap, (int) mo.translationX(), (int) mo.translationY(), mo.opacity);
         }
 
         len = controller.chars.size();
