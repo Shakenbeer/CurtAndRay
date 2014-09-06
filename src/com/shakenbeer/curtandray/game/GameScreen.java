@@ -84,7 +84,6 @@ public class GameScreen extends Screen {
             GameObject mo = controller.flags.get(i);
             graphics.drawPixmap(mo.pixmap, (int) mo.translationX(), (int) mo.translationY());
         }
-
     }
 
     private void draw(Graphics graphics, InterfaceObject io) {

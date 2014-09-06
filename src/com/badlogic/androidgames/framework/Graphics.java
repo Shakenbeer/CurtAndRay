@@ -29,6 +29,4 @@ public interface Graphics {
     public int getWidth();
 
     public int getHeight();
-    
-    public void testDraw();
 }

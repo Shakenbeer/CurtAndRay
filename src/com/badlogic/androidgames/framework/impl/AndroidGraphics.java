@@ -21,7 +21,7 @@ public class AndroidGraphics implements Graphics {
     AssetManager assets;
     Bitmap frameBuffer;
     Canvas canvas;
-    Paint paint;
+    Paint paint, p;
     Matrix matrix;
     Rect srcRect = new Rect();
     Rect dstRect = new Rect();
@@ -31,6 +31,7 @@ public class AndroidGraphics implements Graphics {
         this.frameBuffer = frameBuffer;
         this.canvas = new Canvas(frameBuffer);
         this.paint = new Paint();
+        this.p = new Paint();
         this.matrix = new Matrix();
     }
 
@@ -130,10 +131,5 @@ public class AndroidGraphics implements Graphics {
 
     public int getHeight() {
         return frameBuffer.getHeight();
-    }
-
-    @Override
-    public void testDraw() {
-
     }
 }
