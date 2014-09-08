@@ -3,6 +3,7 @@ package com.shakenbeer.curtandray.game;
 import java.util.List;
 
 import android.text.method.Touch;
+import android.util.Log;
 
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
@@ -24,7 +25,7 @@ public class MainMenuScreen extends Screen {
         for (int i = 0; i < len; i++) {
             TouchEvent event = touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP) {
-                if (inBounds(event, 0, game.getGraphics().getHeight() - 120, 108, 120)) {
+                if (inBounds(event, 0, 1044, 140, 140)) {
                     Settings.soundEnabled = !Settings.soundEnabled;
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundClick().play(1);
@@ -40,6 +41,13 @@ public class MainMenuScreen extends Screen {
                 }
                 if (inBounds(event, 184, 850, 400, 150)) {
                     game.setScreen(new HowToScreen1(game));
+                    if (Settings.soundEnabled) {
+                        Assets.INSTANCE.getSoundClick().play(1);
+                    }
+                    return;
+                }
+                if (inBounds(event, 628, 1044, 140, 140)) {
+                    Settings.hardMode = !Settings.hardMode;
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
@@ -63,6 +71,11 @@ public class MainMenuScreen extends Screen {
             graphics.drawPixmap(Assets.INSTANCE.getButtonSoundOn(), 0, 1044);
         } else {
             graphics.drawPixmap(Assets.INSTANCE.getButtonSoundOff(), 0, 1044);
+        }
+        if (Settings.hardMode) {
+            graphics.drawPixmap(Assets.INSTANCE.getButtonHardModeOn(), 628, 1044);
+        } else {
+            graphics.drawPixmap(Assets.INSTANCE.getButtonHardModeOff(), 628, 1044);
         }
 
     }

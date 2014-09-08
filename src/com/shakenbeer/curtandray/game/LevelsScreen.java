@@ -29,7 +29,7 @@ public class LevelsScreen extends Screen {
                 if (Settings.soundEnabled) {
                     Assets.INSTANCE.getSoundClick().play(1);
                 }
-                if (selected <= Settings.level) {
+                if (selected <= Settings.currentLevel) {
                     game.setScreen(new GameScreen(game, selected));
                 }
             };
@@ -44,10 +44,10 @@ public class LevelsScreen extends Screen {
         
         graphics.drawPixmap(Assets.INSTANCE.getBackground(), 0, 0);
         
-        for (int i = 0; i < Settings.level; i++) {
+        for (int i = 0; i < Settings.currentLevel; i++) {
             graphics.drawPixmap(Assets.INSTANCE.getLevelNum(), i % 4 * 164 + 54, i / 4 * 140 + 40);
         }
-        for (int i = Settings.level; i < 28; i++) {
+        for (int i = Settings.currentLevel; i < 28; i++) {
             graphics.drawPixmap(Assets.INSTANCE.getLevelNumClosed(), i % 4 * 164 + 54, i / 4 * 140 + 40);
         }
         

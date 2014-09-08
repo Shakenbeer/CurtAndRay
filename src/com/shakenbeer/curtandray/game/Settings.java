@@ -9,8 +9,11 @@ import java.io.OutputStreamWriter;
 import com.badlogic.androidgames.framework.FileIO;
 
 public class Settings {
+    public static final int MAX_LEVEL_NUM = 28;
+    
     public static boolean soundEnabled = true;
-    public static int level = 1;
+    public static boolean hardMode = false;
+    public static int currentLevel = 1;
     
     public static void load(FileIO files) {
         BufferedReader in = null;
@@ -18,7 +21,8 @@ public class Settings {
             in = new BufferedReader(new InputStreamReader(
                     files.readFile(".curdandray")));
             soundEnabled = Boolean.parseBoolean(in.readLine());
-            level = Integer.parseInt(in.readLine());
+            currentLevel = Integer.parseInt(in.readLine());
+            hardMode = Boolean.parseBoolean(in.readLine());
         } catch (IOException e) {
             // :( It's ok we have defaults
         } finally {
@@ -36,7 +40,8 @@ public class Settings {
             out = new BufferedWriter(new OutputStreamWriter(
                     files.writeFile(".mrnom")));
             out.write(Boolean.toString(soundEnabled));
-            out.write(Integer.toString(level));
+            out.write(Integer.toString(currentLevel));
+            out.write(Boolean.toString(hardMode));
         } catch (IOException e) {
         } finally {
             try {

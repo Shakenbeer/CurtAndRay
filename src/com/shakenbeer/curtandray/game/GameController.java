@@ -62,6 +62,8 @@ public class GameController {
     int[] rayTarget;
     int[] curtTarget;
 
+    private int hidedOpacity;
+
     public GameController(Game game, int level) {
         this.game = game;
         this.level = level;
@@ -81,6 +83,8 @@ public class GameController {
         mines = new LinkedList<GameObject>();
         flags = new LinkedList<GameObject>();
         removed = new LinkedList<GameObject>();
+
+        hidedOpacity = Settings.hardMode ? 0 : 90;
 
         initLevel();
     }
@@ -107,7 +111,7 @@ public class GameController {
 
         loadMines();
     }
-    
+
     private void loadMines() {
 
         String levelString = Assets.INSTANCE.getLevels().get(level - 1);
@@ -125,13 +129,7 @@ public class GameController {
 
     public void update(List<TouchEvent> touchEvents, float deltaTime) {
         if (stage == GameStage.LevelStart) {
-            if (touchEvents.size() > 0) {
-                if (Settings.soundEnabled) {
-                    Assets.INSTANCE.getSoundClick().play(1);
-                }
-                stage = GameStage.Ray;
-                ray.velNormSqr = DEFAULT_CHAR_SPEED;
-            }
+            updateStageStart(touchEvents);
         }
         if (stage != GameStage.LevelStart) {
             int len = touchEvents.size();
@@ -157,7 +155,26 @@ public class GameController {
         if (stage == GameStage.LevelPaused) {
             updateStatePaused(touchEvents);
         }
+        if (stage == GameStage.LevelFailed) {
+            updateStateFailed(touchEvents);
+        }
 
+    }
+
+    private void updateStageStart(List<TouchEvent> touchEvents) {
+        int len = touchEvents.size();
+        for (int i = 0; i < len; i++) {
+            TouchEvent event = touchEvents.get(i);
+            if (event.type == TouchEvent.TOUCH_UP) {
+                if (event.x > 84 && event.x < 684 - 1 && event.y > 400 && event.y < 850 - 1) {
+                    if (Settings.soundEnabled) {
+                        Assets.INSTANCE.getSoundClick().play(1);
+                    }
+                    stage = GameStage.Ray;
+                    ray.velNormSqr = DEFAULT_CHAR_SPEED;
+                }
+            }
+        }
     }
 
     private void updateStatePaused(List<TouchEvent> touchEvents) {
@@ -166,11 +183,33 @@ public class GameController {
             TouchEvent event = touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP) {
                 if (event.x > 182 && event.x < 582 - 1 && event.y > 450 && event.y < 600 - 1) {
+                    if (Settings.soundEnabled) {
+                        Assets.INSTANCE.getSoundClick().play(1);
+                    }
                     stage = beforePause;
                 }
 
                 if (event.x > 182 && event.x < 582 - 1 && event.y > 600 && event.y < 750 - 1) {
+                    if (Settings.soundEnabled) {
+                        Assets.INSTANCE.getSoundClick().play(1);
+                    }
                     game.setScreen(new MainMenuScreen(game));
+                }
+            }
+        }
+    }
+
+    private void updateStateFailed(List<TouchEvent> touchEvents) {
+        int len = touchEvents.size();
+        for (int i = 0; i < len; i++) {
+            TouchEvent event = touchEvents.get(i);
+            if (event.type == TouchEvent.TOUCH_UP) {
+                if (event.x > 182 && event.x < 582 - 1 && event.y > 425 && event.y < 825 - 1) {
+                    if (Settings.soundEnabled) {
+                        Assets.INSTANCE.getSoundClick().play(1);
+                    }
+                    stage = GameStage.LevelStart;
+                    initLevel();
                 }
             }
         }
@@ -222,7 +261,7 @@ public class GameController {
         if (rv[0] * rv[0] + rv[1] * rv[1] < TARGET_RADIUS) {
             minePos.add(new int[] { rayTarget[0], rayTarget[1] });
             mine = mines.remove(0);
-            mine.opacity = HIDED_OPACITY;
+            mine.opacity = hidedOpacity;
             mines.add(mine);
             ray.posX = rayTarget[0];
             ray.posY = rayTarget[1];
@@ -230,14 +269,24 @@ public class GameController {
             if (Settings.soundEnabled) {
                 Assets.INSTANCE.getSoundHideMine().play(1);
             }
-            if (mines.get(0).opacity == HIDED_OPACITY) {
+            if (mines.get(0).opacity < 255) {
                 ray.velNormSqr = 0;
                 chars.remove(ray);
-                mines.clear();
+                if (!Settings.hardMode) {
+                    hideMines();
+                }
                 stage = GameStage.BuildPath;
             }
         }
         move(ray, deltaTime);
+    }
+
+    private void hideMines() {
+        int len = mines.size();
+        for (int i = 0; i < len; i++) {
+            mines.get(i).opacity = 0;
+        }
+
     }
 
     private void updateBuildPathStage(List<TouchEvent> touchEvents, float deltaTime) {
@@ -318,7 +367,7 @@ public class GameController {
         if (curt.posY < -curt.pixmap.getHeight()) {
             curt.velNormSqr = 0;
             chars.remove(curt);
-            level++;
+            increaseLevel();
             stage = GameStage.LevelStart;
             initLevel();
             if (Settings.soundEnabled) {
@@ -327,10 +376,17 @@ public class GameController {
         }
 
         move(curt, deltaTime);
-        
+
         if (checkCollisions()) {
-            stage = GameStage.LevelStart;
-            initLevel();
+            stage = GameStage.LevelFailed;
+        }
+    }
+
+    private void increaseLevel() {
+        if (level == Settings.MAX_LEVEL_NUM) {
+            level = 1;
+        } else {
+            level++;
         }
     }
 
@@ -338,7 +394,7 @@ public class GameController {
         mo.posX += mo.velX * deltaTime;
         mo.posY += mo.velY * deltaTime;
     }
-    
+
     private boolean checkCollisions() {
         int len = mines.size();
         for (int i = 0; i < len; i++) {

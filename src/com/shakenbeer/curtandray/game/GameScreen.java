@@ -38,11 +38,14 @@ public class GameScreen extends Screen {
         if (controller.stage == GameStage.LevelPaused) {
             graphics.drawPixmap(Assets.INSTANCE.getScreenPause(), 182, 450);
         }
+        if (controller.stage == GameStage.LevelFailed) {
+            graphics.drawPixmap(Assets.INSTANCE.getLevelFailed(), 182, 425);
+        }
     }
 
     @Override
     public void pause() {
-        Settings.level = controller.level;
+        Settings.currentLevel = controller.level;
         Settings.save(game.getFileIO());
         controller.stage = GameStage.LevelPaused;
     }
