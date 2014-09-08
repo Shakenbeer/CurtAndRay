@@ -56,6 +56,7 @@ public class LoadingScreen extends Screen {
         assets.setLevelNumClosed(g.newPixmap("level_num_closed.png", PixmapFormat.ARGB4444));
         
         assets.setLevelFailed(g.newPixmap("failed.png", PixmapFormat.ARGB4444));
+        assets.setPresent(g.newPixmap("present.png", PixmapFormat.ARGB4444));
 
         Audio a = game.getAudio();
 

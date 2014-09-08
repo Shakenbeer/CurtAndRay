@@ -35,6 +35,7 @@ public enum Assets {
     private Pixmap levelFailed;
     private Pixmap buttonHardModeOff;
     private Pixmap buttonHardModeOn;
+    private Pixmap present;
 
     private Sound soundClick;
     private Sound soundHideMine;
@@ -258,6 +259,14 @@ public enum Assets {
 
     public void setButtonHardModeOn(Pixmap buttonHardModeOn) {
         this.buttonHardModeOn = buttonHardModeOn;
+    }
+    
+    public Pixmap getPresent() {
+        return present;
+    }
+
+    public void setPresent(Pixmap present) {
+        this.present = present;
     }
 
     public Sound getSoundClick() {

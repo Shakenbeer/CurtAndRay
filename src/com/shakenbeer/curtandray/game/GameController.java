@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
+import com.badlogic.androidgames.framework.Pixmap;
 
 public class GameController {
 
@@ -58,11 +60,13 @@ public class GameController {
     final List<GameObject> mines;
     final List<GameObject> flags;
     final List<GameObject> removed;
+    final List<GameObject> presents;
     Queue<int[]> minePos;
     int[] rayTarget;
     int[] curtTarget;
 
     private int hidedOpacity;
+    private Random random = new Random();
 
     public GameController(Game game, int level) {
         this.game = game;
@@ -83,6 +87,7 @@ public class GameController {
         mines = new LinkedList<GameObject>();
         flags = new LinkedList<GameObject>();
         removed = new LinkedList<GameObject>();
+        presents = new LinkedList<GameObject>();
 
         hidedOpacity = Settings.hardMode ? 0 : HIDED_OPACITY;
 
@@ -121,17 +126,16 @@ public class GameController {
             updateStateFailed(touchEvents);
         }
     }
-    
+
     public void pause() {
         beforePause = stage;
         stage = LevelStage.LevelPaused;
     }
-    
 
     public void resume() {
         stage = beforePause;
     }
-    
+
     private void initLevel() {
         curt.posX = CURT_INIT_X;
         curt.posY = CURT_INIT_Y;
@@ -153,8 +157,28 @@ public class GameController {
         rayTarget = null;
 
         loadMines();
+        generatePresents();
     }
-    
+
+    private void generatePresents() {
+        float f = random.nextFloat();
+        int presentsCount = 1;
+        if (f >= 0.5f) {
+            presentsCount++;
+        }
+        if (f >= 0.9f) {
+            presentsCount++;
+        }
+        Pixmap pixmap = Assets.INSTANCE.getPresent();
+        for (int i = 0; i < presentsCount; i++) {
+            GameObject present = new GameObject(MINE_PIVOT_X, MINE_PIVOT_Y, MINE_RADIUS, pixmap);
+            present.posX = random.nextInt(768 - pixmap.getWidth()) + pixmap.getWidth() / 2;
+            present.posX = random.nextInt(PLAY_BOUND_BOTTOM - PLAY_BOUND_TOP - pixmap.getHeight()) + PLAY_BOUND_TOP
+                    + pixmap.getHeight() / 2;
+            presents.add(present);
+        }
+    }
+
     private void loadMines() {
 
         String levelString = Assets.INSTANCE.getLevels().get(level - 1);
@@ -348,8 +372,10 @@ public class GameController {
         if (checkCollisions()) {
             stage = LevelStage.LevelFailed;
         }
+
+        checkPresents();
     }
-    
+
     private void updateStatePaused(List<TouchEvent> touchEvents) {
         int len = touchEvents.size();
         for (int i = 0; i < len; i++) {
@@ -388,7 +414,7 @@ public class GameController {
         }
 
     }
- 
+
     private void changeDirection(GameObject mo, float[] rv) {
         float k = (float) Math.sqrt(mo.velNormSqr / (rv[0] * rv[0] + rv[1] * rv[1]));
         mo.velX = rv[0] * k;
@@ -414,6 +440,18 @@ public class GameController {
             }
         }
         return false;
+    }
+
+    private void checkPresents() {
+        int len = presents.size();
+        for (int i = 0; i < len; i++) {
+            GameObject present = presents.get(i);
+            if (collide(curt, present)) {
+                // TODO Play Sound
+                Settings.presentsCollected++;
+                presents.remove(present);
+            }
+        }
     }
 
     private boolean collide(GameObject go1, GameObject go2) {

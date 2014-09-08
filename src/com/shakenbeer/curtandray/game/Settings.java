@@ -14,6 +14,7 @@ public class Settings {
     public static boolean soundEnabled = true;
     public static boolean hardMode = false;
     public static int currentLevel = 1;
+    public static int presentsCollected = 0;
     
     public static void load(FileIO files) {
         BufferedReader in = null;
@@ -23,6 +24,7 @@ public class Settings {
             soundEnabled = Boolean.parseBoolean(in.readLine());
             currentLevel = Integer.parseInt(in.readLine());
             hardMode = Boolean.parseBoolean(in.readLine());
+            presentsCollected = Integer.parseInt(in.readLine());
         } catch (IOException e) {
             // :( It's ok we have defaults
         } finally {
@@ -42,6 +44,7 @@ public class Settings {
             out.write(Boolean.toString(soundEnabled));
             out.write(Integer.toString(currentLevel));
             out.write(Boolean.toString(hardMode));
+            out.write(Integer.toString(presentsCollected));
         } catch (IOException e) {
         } finally {
             try {

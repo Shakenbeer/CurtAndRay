@@ -72,21 +72,27 @@ public class GameScreen extends Screen {
 
         int len = controller.mines.size();
         for (int i = 0; i < len; i++) {
-            GameObject mo = controller.mines.get(i);
-            graphics.drawPixmap(mo.pixmap, (int) mo.translationX(), (int) mo.translationY(), mo.opacity);
+            GameObject go = controller.mines.get(i);
+            graphics.drawPixmap(go.pixmap, (int) go.translationX(), (int) go.translationY(), go.opacity);
         }
 
         len = controller.chars.size();
         for (int i = 0; i < len; i++) {
-            GameObject mo = controller.chars.get(i);
-            graphics.drawPixmap(mo.pixmap, (int) mo.translationX(), (int) mo.translationY(), (int) mo.posX,
-                    (int) mo.posY, mo.angle);
+            GameObject go = controller.chars.get(i);
+            graphics.drawPixmap(go.pixmap, (int) go.translationX(), (int) go.translationY(), (int) go.posX,
+                    (int) go.posY, go.angle);
         }
 
         len = controller.flags.size();
         for (int i = 0; i < len; i++) {
-            GameObject mo = controller.flags.get(i);
-            graphics.drawPixmap(mo.pixmap, (int) mo.translationX(), (int) mo.translationY());
+            GameObject go = controller.flags.get(i);
+            graphics.drawPixmap(go.pixmap, (int) go.translationX(), (int) go.translationY());
+        }
+        
+        len = controller.presents.size();
+        for (int i = 0; i < len; i++) {
+            GameObject go = controller.presents.get(i);
+            graphics.drawPixmap(go.pixmap, (int) go.translationX(), (int) go.translationY());
         }
     }
 
