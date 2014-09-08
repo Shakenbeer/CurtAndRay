@@ -36,12 +36,12 @@ public class GameController {
     private static final int CHAR_PIVOT_Y = 66;
     private static final int CHAR_PIVOT_X = 55;
 
-    enum GameStage {
+    enum LevelStage {
         Ray, RayHide, BuildPath, Curt, LevelStart, LevelPaused, LevelFailed
     }
 
-    GameStage stage = GameStage.LevelStart;
-    GameStage beforePause;
+    LevelStage stage = LevelStage.LevelStart;
+    LevelStage beforePause;
 
     Game game;
     int level;
@@ -84,12 +84,55 @@ public class GameController {
         flags = new LinkedList<GameObject>();
         removed = new LinkedList<GameObject>();
 
-        hidedOpacity = Settings.hardMode ? 0 : 90;
+        hidedOpacity = Settings.hardMode ? 0 : HIDED_OPACITY;
 
         initLevel();
     }
 
-    void initLevel() {
+    public void update(List<TouchEvent> touchEvents, float deltaTime) {
+
+        if (stage == LevelStage.LevelStart) {
+            updateStageStart(touchEvents);
+        }
+        if (stage != LevelStage.LevelStart && stage != LevelStage.LevelFailed) {
+            int len = touchEvents.size();
+            for (int i = 0; i < len; i++) {
+                TouchEvent event = touchEvents.get(i);
+                if (event.type == TouchEvent.TOUCH_UP) {
+                    if (inBounds(event, pause)) {
+                        pause();
+                    }
+                }
+            }
+        }
+        if (stage == LevelStage.Ray) {
+            updateRayStage(deltaTime);
+        } else if (stage == LevelStage.RayHide) {
+            updateRayHideStage(deltaTime);
+        } else if (stage == LevelStage.BuildPath) {
+            updateBuildPathStage(touchEvents, deltaTime);
+        } else if (stage == LevelStage.Curt) {
+            updateCurtStage(deltaTime);
+        }
+        if (stage == LevelStage.LevelPaused) {
+            updateStatePaused(touchEvents);
+        }
+        if (stage == LevelStage.LevelFailed) {
+            updateStateFailed(touchEvents);
+        }
+    }
+    
+    public void pause() {
+        beforePause = stage;
+        stage = LevelStage.LevelPaused;
+    }
+    
+
+    public void resume() {
+        stage = beforePause;
+    }
+    
+    private void initLevel() {
         curt.posX = CURT_INIT_X;
         curt.posY = CURT_INIT_Y;
         curt.angle = 0;
@@ -111,13 +154,11 @@ public class GameController {
 
         loadMines();
     }
-
+    
     private void loadMines() {
 
         String levelString = Assets.INSTANCE.getLevels().get(level - 1);
-
         String[] levelArray = levelString.split(",");
-
         int len = levelArray.length - levelArray.length % 2;
 
         for (int i = 0; i < len;) {
@@ -125,40 +166,6 @@ public class GameController {
             int y = Integer.parseInt(levelArray[i++]);
             minePos.add(new int[] { x, y });
         }
-    }
-
-    public void update(List<TouchEvent> touchEvents, float deltaTime) {
-        if (stage == GameStage.LevelStart) {
-            updateStageStart(touchEvents);
-        }
-        if (stage != GameStage.LevelStart) {
-            int len = touchEvents.size();
-            for (int i = 0; i < len; i++) {
-                TouchEvent event = touchEvents.get(i);
-                if (event.type == TouchEvent.TOUCH_UP) {
-                    if (inBounds(event, pause)) {
-                        beforePause = stage;
-                        stage = GameStage.LevelPaused;
-                    }
-                }
-            }
-        }
-        if (stage == GameStage.Ray) {
-            updateRayStage(deltaTime);
-        } else if (stage == GameStage.RayHide) {
-            updateRayHideStage(deltaTime);
-        } else if (stage == GameStage.BuildPath) {
-            updateBuildPathStage(touchEvents, deltaTime);
-        } else if (stage == GameStage.Curt) {
-            updateCurtStage(deltaTime);
-        }
-        if (stage == GameStage.LevelPaused) {
-            updateStatePaused(touchEvents);
-        }
-        if (stage == GameStage.LevelFailed) {
-            updateStateFailed(touchEvents);
-        }
-
     }
 
     private void updateStageStart(List<TouchEvent> touchEvents) {
@@ -170,50 +177,11 @@ public class GameController {
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
-                    stage = GameStage.Ray;
+                    stage = LevelStage.Ray;
                     ray.velNormSqr = DEFAULT_CHAR_SPEED;
                 }
             }
         }
-    }
-
-    private void updateStatePaused(List<TouchEvent> touchEvents) {
-        int len = touchEvents.size();
-        for (int i = 0; i < len; i++) {
-            TouchEvent event = touchEvents.get(i);
-            if (event.type == TouchEvent.TOUCH_UP) {
-                if (event.x > 182 && event.x < 582 - 1 && event.y > 450 && event.y < 600 - 1) {
-                    if (Settings.soundEnabled) {
-                        Assets.INSTANCE.getSoundClick().play(1);
-                    }
-                    stage = beforePause;
-                }
-
-                if (event.x > 182 && event.x < 582 - 1 && event.y > 600 && event.y < 750 - 1) {
-                    if (Settings.soundEnabled) {
-                        Assets.INSTANCE.getSoundClick().play(1);
-                    }
-                    game.setScreen(new MainMenuScreen(game));
-                }
-            }
-        }
-    }
-
-    private void updateStateFailed(List<TouchEvent> touchEvents) {
-        int len = touchEvents.size();
-        for (int i = 0; i < len; i++) {
-            TouchEvent event = touchEvents.get(i);
-            if (event.type == TouchEvent.TOUCH_UP) {
-                if (event.x > 182 && event.x < 582 - 1 && event.y > 425 && event.y < 825 - 1) {
-                    if (Settings.soundEnabled) {
-                        Assets.INSTANCE.getSoundClick().play(1);
-                    }
-                    stage = GameStage.LevelStart;
-                    initLevel();
-                }
-            }
-        }
-
     }
 
     private void updateRayStage(float deltaTime) {
@@ -239,7 +207,7 @@ public class GameController {
                 Assets.INSTANCE.getSoundSetupMine().play(1);
             }
             if (minePos.isEmpty()) {
-                stage = GameStage.RayHide;
+                stage = LevelStage.RayHide;
             }
         }
         move(ray, deltaTime);
@@ -275,7 +243,7 @@ public class GameController {
                 if (!Settings.hardMode) {
                     hideMines();
                 }
-                stage = GameStage.BuildPath;
+                stage = LevelStage.BuildPath;
             }
         }
         move(ray, deltaTime);
@@ -333,7 +301,7 @@ public class GameController {
                         mine.posY = pos[1];
                         mines.add(mine);
                     }
-                    stage = GameStage.Curt;
+                    stage = LevelStage.Curt;
                     curt.velNormSqr = DEFAULT_CHAR_SPEED;
                 }
             }
@@ -368,7 +336,7 @@ public class GameController {
             curt.velNormSqr = 0;
             chars.remove(curt);
             increaseLevel();
-            stage = GameStage.LevelStart;
+            stage = LevelStage.LevelStart;
             initLevel();
             if (Settings.soundEnabled) {
                 Assets.INSTANCE.getSoundWin().play(1);
@@ -378,16 +346,58 @@ public class GameController {
         move(curt, deltaTime);
 
         if (checkCollisions()) {
-            stage = GameStage.LevelFailed;
+            stage = LevelStage.LevelFailed;
+        }
+    }
+    
+    private void updateStatePaused(List<TouchEvent> touchEvents) {
+        int len = touchEvents.size();
+        for (int i = 0; i < len; i++) {
+            TouchEvent event = touchEvents.get(i);
+            if (event.type == TouchEvent.TOUCH_UP) {
+                if (event.x > 182 && event.x < 582 - 1 && event.y > 450 && event.y < 600 - 1) {
+                    if (Settings.soundEnabled) {
+                        Assets.INSTANCE.getSoundClick().play(1);
+                    }
+                    resume();
+                }
+
+                if (event.x > 182 && event.x < 582 - 1 && event.y > 600 && event.y < 750 - 1) {
+                    if (Settings.soundEnabled) {
+                        Assets.INSTANCE.getSoundClick().play(1);
+                    }
+                    game.setScreen(new MainMenuScreen(game));
+                }
+            }
         }
     }
 
-    private void increaseLevel() {
-        if (level == Settings.MAX_LEVEL_NUM) {
-            level = 1;
-        } else {
-            level++;
+    private void updateStateFailed(List<TouchEvent> touchEvents) {
+        int len = touchEvents.size();
+        for (int i = 0; i < len; i++) {
+            TouchEvent event = touchEvents.get(i);
+            if (event.type == TouchEvent.TOUCH_UP) {
+                if (event.x > 182 && event.x < 582 - 1 && event.y > 425 && event.y < 825 - 1) {
+                    if (Settings.soundEnabled) {
+                        Assets.INSTANCE.getSoundClick().play(1);
+                    }
+                    stage = LevelStage.LevelStart;
+                    initLevel();
+                }
+            }
         }
+
+    }
+ 
+    private void changeDirection(GameObject mo, float[] rv) {
+        float k = (float) Math.sqrt(mo.velNormSqr / (rv[0] * rv[0] + rv[1] * rv[1]));
+        mo.velX = rv[0] * k;
+        mo.velY = rv[1] * k;
+        mo.angle = (float) Math.toDegrees(Math.atan2(mo.velY, mo.velX) + Math.PI / 2);
+    }
+
+    private float[] directionVector(GameObject mo, int[] target) {
+        return new float[] { target[0] - mo.posX, target[1] - mo.posY };
     }
 
     private void move(GameObject mo, float deltaTime) {
@@ -406,7 +416,7 @@ public class GameController {
         return false;
     }
 
-    public boolean collide(GameObject go1, GameObject go2) {
+    private boolean collide(GameObject go1, GameObject go2) {
         float distSqr = (go1.posX - go2.posX) * (go1.posX - go2.posX) + (go1.posY - go2.posY) * (go1.posY - go2.posY);
         return (distSqr < (go1.radius + go2.radius) * (go1.radius + go2.radius));
     }
@@ -419,14 +429,13 @@ public class GameController {
             return false;
     }
 
-    private void changeDirection(GameObject mo, float[] rv) {
-        float k = (float) Math.sqrt(mo.velNormSqr / (rv[0] * rv[0] + rv[1] * rv[1]));
-        mo.velX = rv[0] * k;
-        mo.velY = rv[1] * k;
-        mo.angle = (float) Math.toDegrees(Math.atan2(mo.velY, mo.velX) + Math.PI / 2);
+    private void increaseLevel() {
+        if (level == Settings.MAX_LEVEL_NUM) {
+            level = 1;
+        } else {
+            level++;
+        }
+        Settings.currentLevel = level;
     }
 
-    private float[] directionVector(GameObject mo, int[] target) {
-        return new float[] { target[0] - mo.posX, target[1] - mo.posY };
-    }
 }

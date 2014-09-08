@@ -6,7 +6,7 @@ import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
 import com.badlogic.androidgames.framework.Screen;
-import com.shakenbeer.curtandray.game.GameController.GameStage;
+import com.shakenbeer.curtandray.game.GameController.LevelStage;
 
 public class GameScreen extends Screen {
 
@@ -30,24 +30,25 @@ public class GameScreen extends Screen {
     public void present(float deltaTime) {
         Graphics graphics = game.getGraphics();
         drawCommon(graphics);
-        
-        if (controller.stage == GameStage.LevelStart) {
+
+        if (controller.stage == LevelStage.LevelStart) {
             graphics.drawPixmap(Assets.INSTANCE.getScreenLevel(), 84, 400);
             drawText(graphics, String.valueOf(controller.level), 492, 435);
         }
-        if (controller.stage == GameStage.LevelPaused) {
+        if (controller.stage == LevelStage.LevelPaused) {
             graphics.drawPixmap(Assets.INSTANCE.getScreenPause(), 182, 450);
         }
-        if (controller.stage == GameStage.LevelFailed) {
+        if (controller.stage == LevelStage.LevelFailed) {
             graphics.drawPixmap(Assets.INSTANCE.getLevelFailed(), 182, 425);
         }
     }
 
     @Override
-    public void pause() {
-        Settings.currentLevel = controller.level;
+    public void pause() {        
         Settings.save(game.getFileIO());
-        controller.stage = GameStage.LevelPaused;
+        if (controller.stage != LevelStage.LevelStart && controller.stage != LevelStage.LevelFailed) {
+            controller.pause();
+        }
     }
 
     @Override
