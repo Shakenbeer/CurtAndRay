@@ -9,10 +9,12 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
@@ -21,6 +23,7 @@ public class AndroidGraphics implements Graphics {
     AssetManager assets;
     Bitmap frameBuffer;
     Canvas canvas;
+    Typeface typeface;
     Paint paint, opacity;
     Matrix matrix;
     Rect srcRect = new Rect();
@@ -33,6 +36,7 @@ public class AndroidGraphics implements Graphics {
         this.paint = new Paint();
         this.opacity = new Paint();
         this.matrix = new Matrix();
+        this.typeface = Typeface.createFromAsset(assets, "KGTenThousandReasons.ttf");
     }
 
     public Pixmap newPixmap(String fileName, PixmapFormat format) {
@@ -93,6 +97,17 @@ public class AndroidGraphics implements Graphics {
         paint.setColor(color);
         paint.setStyle(Style.FILL);
         canvas.drawRect(x, y, x + width - 1, y + width - 1, paint);
+    }
+    
+
+    @Override
+    public void drawText(String text, int x, int y, int size, int color) {
+        paint.setColor(color);
+        paint.setTypeface(typeface);
+        paint.setTextSize(size);
+        paint.setTextAlign(Paint.Align.LEFT);
+        canvas.drawText(text, x, y, paint);
+        
     }
 
     public void drawPixmap(Pixmap pixmap, int x, int y, int srcX, int srcY, int srcWidth, int srcHeight) {
