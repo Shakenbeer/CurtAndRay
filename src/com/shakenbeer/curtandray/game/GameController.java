@@ -37,6 +37,9 @@ public class GameController {
     private static final int CHAR_RADIUS = 32;
     private static final int CHAR_PIVOT_Y = 66;
     private static final int CHAR_PIVOT_X = 55;
+    private static final int PRESENT_RADIUS = 40;
+    private static final int PRESENT_PIVOT_X = 40;
+    private static final int PRESENT_PIVOT_Y = 40;
 
     enum LevelStage {
         Ray, RayHide, BuildPath, Curt, LevelStart, LevelPaused, LevelFailed
@@ -67,6 +70,7 @@ public class GameController {
 
     private int hidedOpacity;
     private Random random = new Random();
+    private int presentsCollected;
 
     public GameController(Game game, int level) {
         this.game = game;
@@ -152,12 +156,14 @@ public class GameController {
         mines.clear();
         flags.clear();
         removed.clear();
+        presents.clear();
 
         curtTarget = null;
         rayTarget = null;
 
         loadMines();
         generatePresents();
+        presentsCollected = 0;
     }
 
     private void generatePresents() {
@@ -171,9 +177,9 @@ public class GameController {
         }
         Pixmap pixmap = Assets.INSTANCE.getPresent();
         for (int i = 0; i < presentsCount; i++) {
-            GameObject present = new GameObject(MINE_PIVOT_X, MINE_PIVOT_Y, MINE_RADIUS, pixmap);
+            GameObject present = new GameObject(PRESENT_PIVOT_X, PRESENT_PIVOT_Y, PRESENT_RADIUS, pixmap);
             present.posX = random.nextInt(768 - pixmap.getWidth()) + pixmap.getWidth() / 2;
-            present.posX = random.nextInt(PLAY_BOUND_BOTTOM - PLAY_BOUND_TOP - pixmap.getHeight()) + PLAY_BOUND_TOP
+            present.posY = random.nextInt(PLAY_BOUND_BOTTOM - PLAY_BOUND_TOP - pixmap.getHeight()) + PLAY_BOUND_TOP
                     + pixmap.getHeight() / 2;
             presents.add(present);
         }
@@ -350,6 +356,9 @@ public class GameController {
         }
 
         if (rv[0] * rv[0] + rv[1] * rv[1] < TARGET_RADIUS) {
+            if (Settings.soundEnabled) {
+                Assets.INSTANCE.getSoundWoosh();
+            }
             curt.posX = curtTarget[0];
             curt.posY = curtTarget[1];
             flags.remove(0);
@@ -360,6 +369,7 @@ public class GameController {
             curt.velNormSqr = 0;
             chars.remove(curt);
             increaseLevel();
+            Settings.presentsCollected += presentsCollected;
             stage = LevelStage.LevelStart;
             initLevel();
             if (Settings.soundEnabled) {
@@ -370,6 +380,9 @@ public class GameController {
         move(curt, deltaTime);
 
         if (checkCollisions()) {
+            if (Settings.soundEnabled) {
+                Assets.INSTANCE.getSoundLose().play(1);
+            }
             stage = LevelStage.LevelFailed;
         }
 
@@ -448,8 +461,9 @@ public class GameController {
             GameObject present = presents.get(i);
             if (collide(curt, present)) {
                 // TODO Play Sound
-                Settings.presentsCollected++;
+                presentsCollected++;
                 presents.remove(present);
+                return;
             }
         }
     }

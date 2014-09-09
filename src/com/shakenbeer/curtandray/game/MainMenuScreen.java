@@ -2,13 +2,12 @@ package com.shakenbeer.curtandray.game;
 
 import java.util.List;
 
-import android.text.method.Touch;
-import android.util.Log;
+import android.graphics.Color;
 
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
-import com.badlogic.androidgames.framework.Screen;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
+import com.badlogic.androidgames.framework.Screen;
 
 public class MainMenuScreen extends Screen {
 
@@ -25,28 +24,28 @@ public class MainMenuScreen extends Screen {
         for (int i = 0; i < len; i++) {
             TouchEvent event = touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP) {
-                if (inBounds(event, 0, 1044, 140, 140)) {
+                if (soundOptionTouched(event)) {
                     Settings.soundEnabled = !Settings.soundEnabled;
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
                     return;
                 }
-                if (inBounds(event, 134, 600, 500, 200)) {
-                    game.setScreen(new LevelsScreen(game));
+                if (playTouched(event)) {
+                    game.setScreen(new LevelsScreen(game, 1));
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
                     return;
                 }
-                if (inBounds(event, 184, 850, 400, 150)) {
+                if (howToTouched(event)) {
                     game.setScreen(new HowToScreen1(game));
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
                     return;
                 }
-                if (inBounds(event, 628, 1044, 140, 140)) {
+                if (modeOptionTouched(event)) {
                     Settings.hardMode = !Settings.hardMode;
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundClick().play(1);
@@ -77,6 +76,8 @@ public class MainMenuScreen extends Screen {
         } else {
             graphics.drawPixmap(Assets.INSTANCE.getButtonHardModeOff(), 628, 1044);
         }
+        graphics.drawPixmap(Assets.INSTANCE.getPresent(), 304, 1090);
+        graphics.drawText(String.valueOf(Settings.presentsCollected), 400, 1170, 70, Color.parseColor("#00779E"));
 
     }
 
@@ -95,6 +96,21 @@ public class MainMenuScreen extends Screen {
     public void dispose() {
         // TODO Auto-generated method stub
 
+    }
+    
+    private boolean soundOptionTouched(TouchEvent event) {
+        return inBounds(event, 0, 1044, 140, 140);
+    }
+    
+    private boolean playTouched(TouchEvent event) {
+        return inBounds(event, 134, 600, 500, 200);
+    }
+    
+    private boolean howToTouched(TouchEvent event) {
+        return inBounds(event, 184, 850, 400, 150);
+    }
+    private boolean modeOptionTouched(TouchEvent event) {
+        return inBounds(event, 628, 1044, 140, 140);
     }
 
     private boolean inBounds(TouchEvent event, int x, int y, int width, int height) {
