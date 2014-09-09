@@ -19,6 +19,8 @@ import com.badlogic.androidgames.framework.Input;
 import com.badlogic.androidgames.framework.Screen;
 
 public abstract class AndroidGame extends Activity implements Game {
+    public static final int SCREEN_WIDTH = 768;
+    public static final int SCREEN_HEIGHT = 1184;
     AndroidFastRenderView renderView;
     Graphics graphics;
     Audio audio;
@@ -36,8 +38,8 @@ public abstract class AndroidGame extends Activity implements Game {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         boolean isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-        int frameBufferWidth = isLandscape ? 1184 : 768;
-        int frameBufferHeight = isLandscape ? 768 : 1184;
+        int frameBufferWidth = isLandscape ? SCREEN_HEIGHT : SCREEN_WIDTH;
+        int frameBufferHeight = isLandscape ? SCREEN_WIDTH : SCREEN_HEIGHT;
         Bitmap frameBuffer = Bitmap.createBitmap(frameBufferWidth,
                 frameBufferHeight, Config.RGB_565);
         
