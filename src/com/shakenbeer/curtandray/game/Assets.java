@@ -42,6 +42,8 @@ public enum Assets {
     private Sound soundSetupFlag;
     private Sound soundSetupMine;
     private Sound soundWin;
+    private Sound soundLose;
+    private Sound soundWoosh;
     
     private List<String> levels;
 
@@ -315,7 +317,22 @@ public enum Assets {
 
     public void setLevels(List<String> levels) {
         this.levels = levels;
-    }    
+    }
 
+    public Sound getSoundLose() {
+        return soundLose;
+    }
+
+    public void setSoundLose(Sound soundLose) {
+        this.soundLose = soundLose;
+    }
+
+    public Sound getSoundWoosh() {
+        return soundWoosh;
+    }
+
+    public void setSoundWoosh(Sound soundWoosh) {
+        this.soundWoosh = soundWoosh;
+    }    
     
 }
