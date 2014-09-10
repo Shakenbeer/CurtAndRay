@@ -52,6 +52,15 @@ public class MainMenuScreen extends Screen {
                     }
                     return;
                 }
+                if (speedTouched(event)) {
+                    Settings.gameSpeed++;
+                    if (Settings.gameSpeed > 5) {
+                        Settings.gameSpeed = 1;
+                    }
+                    if (Settings.soundEnabled) {
+                        Assets.INSTANCE.getSoundClick().play(1);
+                    }
+                }
             }
 
         }
@@ -76,8 +85,11 @@ public class MainMenuScreen extends Screen {
         } else {
             graphics.drawPixmap(Assets.INSTANCE.getButtonHardModeOff(), 628, 1044);
         }
-        graphics.drawPixmap(Assets.INSTANCE.getPresent(), 304, 1090);
-        graphics.drawText(String.valueOf(Settings.presentsCollected), 400, 1170, 70, Color.parseColor("#00779E"));
+        graphics.drawPixmap(Assets.INSTANCE.getButtonSpeed(), 488, 1044);
+        graphics.drawText(String.valueOf(Settings.gameSpeed), 545, 1175, 65, Color.WHITE);
+        
+        graphics.drawPixmap(Assets.INSTANCE.getPresent(), 164, 1090);
+        graphics.drawText(String.valueOf(Settings.presentsCollected), 260, 1170, 70, Color.parseColor("#00779E"));
 
     }
 
@@ -109,8 +121,13 @@ public class MainMenuScreen extends Screen {
     private boolean howToTouched(TouchEvent event) {
         return inBounds(event, 184, 850, 400, 150);
     }
+    
     private boolean modeOptionTouched(TouchEvent event) {
         return inBounds(event, 628, 1044, 140, 140);
+    }
+    
+    private boolean speedTouched(TouchEvent event) {
+        return inBounds(event, 488, 1044, 140, 140);
     }
 
     private boolean inBounds(TouchEvent event, int x, int y, int width, int height) {

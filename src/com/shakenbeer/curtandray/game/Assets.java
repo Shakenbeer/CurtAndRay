@@ -36,6 +36,7 @@ public enum Assets {
     private Pixmap buttonHardModeOff;
     private Pixmap buttonHardModeOn;
     private Pixmap present;
+    private Pixmap buttonSpeed;
 
     private Sound soundClick;
     private Sound soundHideMine;
@@ -270,6 +271,14 @@ public enum Assets {
 
     public void setPresent(Pixmap present) {
         this.present = present;
+    }
+
+    public Pixmap getButtonSpeed() {
+        return buttonSpeed;
+    }
+
+    public void setButtonSpeed(Pixmap buttonSpeed) {
+        this.buttonSpeed = buttonSpeed;
     }
 
     public Sound getSoundClick() {

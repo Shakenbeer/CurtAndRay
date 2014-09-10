@@ -12,6 +12,7 @@ import com.badlogic.androidgames.framework.Pixmap;
 
 public class GameController {
 
+    private static final int SPEED_FACTOR = 50000;
     private static final int HIDED_OPACITY = 90;
     private static final int START_Y = 1070;
     private static final int START_X = 478;
@@ -117,7 +118,7 @@ public class GameController {
         if (stage == LevelStage.Ray) {
             updateRayStage(deltaTime);
         } else if (stage == LevelStage.RayHide) {
-            updateRayHideStage(deltaTime);
+            updateRayHideStage(touchEvents, deltaTime);
         } else if (stage == LevelStage.BuildPath) {
             updateBuildPathStage(touchEvents, deltaTime);
         } else if (stage == LevelStage.Curt) {
@@ -203,12 +204,12 @@ public class GameController {
         for (int i = 0; i < len; i++) {
             TouchEvent event = touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP) {
-                if (event.x > 84 && event.x < 684 - 1 && event.y > 400 && event.y < 850 - 1) {
+                if ((event.x > 84 && event.x < 684 - 1 && event.y > 400 && event.y < 850 - 1) || start.touched(event)) {
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
                     stage = LevelStage.Ray;
-                    ray.velNormSqr = DEFAULT_CHAR_SPEED;
+                    ray.velNormSqr = DEFAULT_CHAR_SPEED + SPEED_FACTOR * (Settings.gameSpeed - 1);
                 }
             }
         }
@@ -243,7 +244,34 @@ public class GameController {
         move(ray, deltaTime);
     }
 
-    private void updateRayHideStage(float deltaTime) {
+    private void updateRayHideStage(List<TouchEvent> touchEvents, float deltaTime) {
+        int len = touchEvents.size();
+        
+        for (int i = 0; i < len; i++) {
+            TouchEvent event = touchEvents.get(i);
+            if (event.type == TouchEvent.TOUCH_UP) {
+                if ((event.y > PLAY_BOUND_TOP && event.y < PLAY_BOUND_BOTTOM) || start.touched(event)) {
+                    if (Settings.soundEnabled) {
+                        Assets.INSTANCE.getSoundClick().play(1);
+                    }
+                    int mCount = mines.size();
+                    for (int j = 0; j < mCount; j++) {
+                        if (mines.get(j).opacity < 255) {
+                            break;
+                        }
+                        minePos.add(new int[] {(int)mines.get(j).posX, (int)mines.get(j).posY});
+                    }
+                    ray.velNormSqr = 0;
+                    chars.remove(ray);
+                    if (!Settings.hardMode) {
+                        hideMines();
+                    }
+                    stage = LevelStage.BuildPath;
+                    return;
+                }
+            }
+        }        
+        
         float[] rv;
         GameObject mine;
 
@@ -332,7 +360,7 @@ public class GameController {
                         mines.add(mine);
                     }
                     stage = LevelStage.Curt;
-                    curt.velNormSqr = DEFAULT_CHAR_SPEED;
+                    curt.velNormSqr = DEFAULT_CHAR_SPEED + SPEED_FACTOR * (Settings.gameSpeed - 1);
                 }
             }
         }

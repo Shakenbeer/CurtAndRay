@@ -38,6 +38,7 @@ public class LoadingScreen extends Screen {
         assets.setButtonPause(g.newPixmap("button_pause.png", PixmapFormat.ARGB4444));
         assets.setButtonHardModeOff(g.newPixmap("button_hard_mode_off.png", PixmapFormat.ARGB4444));
         assets.setButtonHardModeOn(g.newPixmap("button_hard_mode_on.png", PixmapFormat.ARGB4444));
+        assets.setButtonSpeed(g.newPixmap("speed.png", PixmapFormat.ARGB4444));
 
         assets.setCurt(g.newPixmap("curt.png", PixmapFormat.ARGB4444));
         assets.setDigits(g.newPixmap("digits.png", PixmapFormat.ARGB4444));

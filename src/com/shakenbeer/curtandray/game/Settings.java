@@ -15,6 +15,7 @@ public class Settings {
     public static boolean hardMode = false;
     public static int currentLevel = 1;
     public static int presentsCollected = 0;
+    public static int gameSpeed = 1;
     
     public static void load(FileIO files) {
         BufferedReader in = null;
