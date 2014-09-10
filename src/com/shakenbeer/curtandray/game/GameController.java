@@ -460,7 +460,9 @@ public class GameController {
         for (int i = 0; i < len; i++) {
             GameObject present = presents.get(i);
             if (collide(curt, present)) {
-                // TODO Play Sound
+                if (Settings.soundEnabled) {
+                    Assets.INSTANCE.getSoundPresent().play(1);
+                }
                 presentsCollected++;
                 presents.remove(present);
                 return;

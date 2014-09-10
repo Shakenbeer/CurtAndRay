@@ -44,6 +44,7 @@ public enum Assets {
     private Sound soundWin;
     private Sound soundLose;
     private Sound soundWoosh;
+    private Sound soundPresent;
     
     private List<String> levels;
 
@@ -333,6 +334,14 @@ public enum Assets {
 
     public void setSoundWoosh(Sound soundWoosh) {
         this.soundWoosh = soundWoosh;
+    }
+
+    public Sound getSoundPresent() {
+        return soundPresent;
+    }
+
+    public void setSoundPresent(Sound soundPresent) {
+        this.soundPresent = soundPresent;
     }    
     
 }

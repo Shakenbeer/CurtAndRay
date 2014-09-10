@@ -67,6 +67,7 @@ public class LoadingScreen extends Screen {
         assets.setSoundWin(a.newSound("win.ogg"));
         assets.setSoundLose(a.newSound("lose.ogg"));
         assets.setSoundWoosh(a.newSound("woosh.ogg"));
+        assets.setSoundPresent(a.newSound("nishtyak.ogg"));
         
         FileIO fio = game.getFileIO();
         

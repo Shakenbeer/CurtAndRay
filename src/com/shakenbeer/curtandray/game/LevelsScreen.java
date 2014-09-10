@@ -13,7 +13,7 @@ import com.badlogic.androidgames.framework.Screen;
 public class LevelsScreen extends Screen {
 
     private static final int LEVELS_PER_PAGE = 28;
-    private static final int PAGE_COUNT = 2;
+    private static final int PAGE_COUNT = 3;
     Pixmap arrowRight = Assets.INSTANCE.getButtonArrowRight();
     Pixmap arrowLeft = Assets.INSTANCE.getButtonArrowLeft();
     int page;

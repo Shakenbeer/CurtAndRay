@@ -9,7 +9,7 @@ import java.io.OutputStreamWriter;
 import com.badlogic.androidgames.framework.FileIO;
 
 public class Settings {
-    public static final int MAX_LEVEL_NUM = 56;
+    public static final int MAX_LEVEL_NUM = 84;
     
     public static boolean soundEnabled = true;
     public static boolean hardMode = false;
