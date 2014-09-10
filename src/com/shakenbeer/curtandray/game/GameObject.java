@@ -1,5 +1,6 @@
 package com.shakenbeer.curtandray.game;
 
+import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
 
 public class GameObject {
@@ -23,6 +24,15 @@ public class GameObject {
 		this.radius = radius;
 		this.pixmap = pixmap;
 	}
+    
+    public void drawSimple(Graphics graphics) {
+        graphics.drawPixmap(pixmap, (int) translationX(), (int) translationY());
+    }
+    
+    public void draw(Graphics graphics) {
+        graphics.drawPixmap(pixmap, (int) translationX(), (int) translationY(), (int) posX,
+                (int) posY, angle);
+    }
 
 	float translationX() {
         return posX - pivotX;

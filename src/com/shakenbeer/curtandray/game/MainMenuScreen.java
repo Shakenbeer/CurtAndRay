@@ -12,7 +12,7 @@ import com.badlogic.androidgames.framework.Screen;
 public class MainMenuScreen extends Screen {
 
     public MainMenuScreen(Game game) {
-        super(game);
+        super(game);        
     }
 
     @Override

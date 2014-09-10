@@ -64,11 +64,11 @@ public class GameScreen extends Screen {
     private void drawCommon(Graphics graphics) {
 
         graphics.drawPixmap(Assets.INSTANCE.getBackground(), 0, 0);
-        draw(graphics, controller.nextLevel);
-        draw(graphics, controller.arrowLeft);
-        draw(graphics, controller.arrowRight);
-        draw(graphics, controller.start);
-        draw(graphics, controller.pause);
+        controller.nextLevel.draw(graphics);
+        controller.arrowLeft.draw(graphics);
+        controller.arrowRight.draw(graphics);
+        controller.start.draw(graphics);
+        controller.pause.draw(graphics);
 
         int len = controller.mines.size();
         for (int i = 0; i < len; i++) {
@@ -79,25 +79,20 @@ public class GameScreen extends Screen {
         len = controller.chars.size();
         for (int i = 0; i < len; i++) {
             GameObject go = controller.chars.get(i);
-            graphics.drawPixmap(go.pixmap, (int) go.translationX(), (int) go.translationY(), (int) go.posX,
-                    (int) go.posY, go.angle);
+            go.draw(graphics);
         }
 
         len = controller.flags.size();
         for (int i = 0; i < len; i++) {
             GameObject go = controller.flags.get(i);
-            graphics.drawPixmap(go.pixmap, (int) go.translationX(), (int) go.translationY());
+            go.drawSimple(graphics);
         }
         
         len = controller.presents.size();
         for (int i = 0; i < len; i++) {
             GameObject go = controller.presents.get(i);
-            graphics.drawPixmap(go.pixmap, (int) go.translationX(), (int) go.translationY());
+            go.drawSimple(graphics);
         }
-    }
-
-    private void draw(Graphics graphics, InterfaceObject io) {
-        graphics.drawPixmap(io.pixmap, io.x, io.y);
     }
 
     private void drawText(Graphics g, String line, int x, int y) {

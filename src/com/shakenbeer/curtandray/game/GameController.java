@@ -108,7 +108,7 @@ public class GameController {
             for (int i = 0; i < len; i++) {
                 TouchEvent event = touchEvents.get(i);
                 if (event.type == TouchEvent.TOUCH_UP) {
-                    if (inBounds(event, pause)) {
+                    if (pause.touched(event)) {
                         pause();
                     }
                 }
@@ -302,7 +302,7 @@ public class GameController {
                     }
                     removed.clear();
                 }
-                if (inBounds(event, arrowLeft)) {
+                if (arrowLeft.touched(event)) {
                     if (!flags.isEmpty()) {
                         removed.add(flags.remove(flags.size() - 1));
                     }
@@ -310,7 +310,7 @@ public class GameController {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
                 }
-                if (inBounds(event, arrowRight)) {
+                if (arrowRight.touched(event)) {
                     if (!removed.isEmpty()) {
                         flags.add(removed.remove(removed.size() - 1));
                     }
@@ -318,7 +318,7 @@ public class GameController {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
                 }
-                if (inBounds(event, start)) {
+                if (start.touched(event)) {
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
@@ -357,7 +357,7 @@ public class GameController {
 
         if (rv[0] * rv[0] + rv[1] * rv[1] < TARGET_RADIUS) {
             if (Settings.soundEnabled) {
-                Assets.INSTANCE.getSoundWoosh();
+                Assets.INSTANCE.getSoundWoosh().play(1);
             }
             curt.posX = curtTarget[0];
             curt.posY = curtTarget[1];
@@ -473,14 +473,6 @@ public class GameController {
         return (distSqr < (go1.radius + go2.radius) * (go1.radius + go2.radius));
     }
 
-    private boolean inBounds(TouchEvent event, InterfaceObject io) {
-        if (event.x > io.x && event.x < io.x + io.pixmap.getWidth() - 1 && event.y > io.y
-                && event.y < io.y + io.pixmap.getHeight() - 1)
-            return true;
-        else
-            return false;
-    }
-
     private void increaseLevel() {
         if (level == Settings.MAX_LEVEL_NUM) {
             level = 1;
@@ -488,6 +480,7 @@ public class GameController {
             level++;
         }
         Settings.currentLevel = level;
+        Settings.save(game.getFileIO());
     }
 
 }

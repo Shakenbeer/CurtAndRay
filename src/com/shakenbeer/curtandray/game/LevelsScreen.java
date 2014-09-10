@@ -37,9 +37,9 @@ public class LevelsScreen extends Screen {
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
-                    if (selected <= Settings.currentLevel) {
+//                    if (selected <= Settings.currentLevel) {
                         game.setScreen(new GameScreen(game, selected));
-                    }
+//                    }
                 }
                 if (page < PAGE_COUNT
                         && inBounds(event, 768 - arrowRight.getWidth(), 1184 - arrowRight.getHeight(),
