@@ -74,6 +74,7 @@ public class GameController {
     private int presentsCollected;
 
     public Pixmap background;
+    private float rvSqrPrev;
 
     public GameController(Game game, int level) {
         this.game = game;
@@ -229,9 +230,12 @@ public class GameController {
             rayTarget = minePos.remove();
             rv = directionVector(ray, rayTarget);
             changeDirection(ray, rv);
+            rvSqrPrev = 1000000.0f;
         }
+        
+        float rvSqr = rv[0] * rv[0] + rv[1] * rv[1];
 
-        if (rv[0] * rv[0] + rv[1] * rv[1] < TARGET_RADIUS) {
+        if (rvSqr < TARGET_RADIUS || rvSqr > rvSqrPrev) {
             GameObject mine = new GameObject(MINE_PIVOT_X, MINE_PIVOT_Y, MINE_RADIUS, Assets.INSTANCE.getMine());
             mine.posX = rayTarget[0];
             mine.posY = rayTarget[1];
@@ -245,6 +249,8 @@ public class GameController {
             if (minePos.isEmpty()) {
                 stage = LevelStage.RayHide;
             }
+        } else {
+            rvSqrPrev = rvSqr;
         }
         move(ray, deltaTime);
     }
@@ -287,9 +293,12 @@ public class GameController {
             rayTarget = new int[] { (int) mine.posX, (int) mine.posY };
             rv = directionVector(ray, rayTarget);
             changeDirection(ray, rv);
+            rvSqrPrev = 1000000.0f;
         }
 
-        if (rv[0] * rv[0] + rv[1] * rv[1] < TARGET_RADIUS) {
+        float rvSqr = rv[0] * rv[0] + rv[1] * rv[1];
+
+        if (rvSqr < TARGET_RADIUS || rvSqr > rvSqrPrev) {
             minePos.add(new int[] { rayTarget[0], rayTarget[1] });
             mine = mines.remove(0);
             mine.opacity = hidedOpacity;
@@ -308,6 +317,8 @@ public class GameController {
                 }
                 stage = LevelStage.BuildPath;
             }
+        } else {
+            rvSqrPrev = rvSqr;
         }
         move(ray, deltaTime);
     }
@@ -386,9 +397,12 @@ public class GameController {
             }
             rv = directionVector(curt, curtTarget);
             changeDirection(curt, rv);
+            rvSqrPrev = 1000000.0f;
         }
 
-        if (rv[0] * rv[0] + rv[1] * rv[1] < TARGET_RADIUS) {
+        float rvSqr = rv[0] * rv[0] + rv[1] * rv[1];
+
+        if (rvSqr < TARGET_RADIUS || rvSqr > rvSqrPrev) {
             if (Settings.soundEnabled) {
                 Assets.INSTANCE.getSoundWoosh().play(1);
             }
@@ -396,6 +410,8 @@ public class GameController {
             curt.posY = curtTarget[1];
             flags.remove(0);
             curtTarget = null;
+        } else {
+            rvSqrPrev = rvSqr;  
         }
 
         if (curt.posY < -curt.pixmap.getHeight()) {
