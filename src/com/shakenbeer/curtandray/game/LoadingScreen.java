@@ -50,6 +50,7 @@ public class LoadingScreen extends Screen {
 
         assets.setScreenHowTo1(g.newPixmap("screen_how_to_1.png", PixmapFormat.ARGB4444));
         assets.setScreenHowTo2(g.newPixmap("screen_how_to_2.png", PixmapFormat.ARGB4444));
+        assets.setScreenHowTo3(g.newPixmap("screen_how_to_3.png", PixmapFormat.ARGB4444));
         assets.setScreenLevel(g.newPixmap("screen_level.png", PixmapFormat.ARGB4444));
         assets.setScreenPause(g.newPixmap("screen_pause.png", PixmapFormat.ARGB4444));
         

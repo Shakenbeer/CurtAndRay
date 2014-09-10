@@ -7,9 +7,9 @@ import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Screen;
 import com.badlogic.androidgames.framework.Input.TouchEvent;
 
-public class HowToScreen2 extends Screen {
+public class HowToScreen3 extends Screen {
 
-    public HowToScreen2(Game game) {
+    public HowToScreen3(Game game) {
         super(game);
     }
 
@@ -23,7 +23,7 @@ public class HowToScreen2 extends Screen {
             TouchEvent event = touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP) {
                 if (event.x > 648 && event.y > 1084) {
-                    game.setScreen(new HowToScreen3(game));
+                    game.setScreen(new MainMenuScreen(game));
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
@@ -36,8 +36,8 @@ public class HowToScreen2 extends Screen {
     public void present(float deltaTime) {
         Graphics graphics = game.getGraphics();
         graphics.drawPixmap(Assets.INSTANCE.getBackground(), 0, 0);
-        graphics.drawPixmap(Assets.INSTANCE.getScreenHowTo2(), 34, 0);
-        graphics.drawPixmap(Assets.INSTANCE.getButtonArrowRight(), 648, 1084);
+        graphics.drawPixmap(Assets.INSTANCE.getScreenHowTo3(), 34, 0);
+        graphics.drawPixmap(Assets.INSTANCE.getButtonClose(), 648, 1084);
 
     }
 
@@ -58,5 +58,4 @@ public class HowToScreen2 extends Screen {
         // TODO Auto-generated method stub
 
     }
-
 }

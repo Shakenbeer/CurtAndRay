@@ -17,6 +17,7 @@ public enum Assets {
     private Pixmap buttonHowTo;
     private Pixmap screenHowTo1;
     private Pixmap screenHowTo2;
+    private Pixmap screenHowTo3;
     private Pixmap screenLevel;
     private Pixmap logo;
     private Pixmap mine;
@@ -46,7 +47,7 @@ public enum Assets {
     private Sound soundLose;
     private Sound soundWoosh;
     private Sound soundPresent;
-    
+
     private List<String> levels;
 
     public Pixmap getButtonArrowLeft() {
@@ -119,6 +120,14 @@ public enum Assets {
 
     public void setScreenHowTo2(Pixmap screenHowTo2) {
         this.screenHowTo2 = screenHowTo2;
+    }
+
+    public Pixmap getScreenHowTo3() {
+        return screenHowTo3;
+    }
+
+    public void setScreenHowTo3(Pixmap screenHowTo3) {
+        this.screenHowTo3 = screenHowTo3;
     }
 
     public Pixmap getScreenLevel() {
@@ -264,7 +273,7 @@ public enum Assets {
     public void setButtonHardModeOn(Pixmap buttonHardModeOn) {
         this.buttonHardModeOn = buttonHardModeOn;
     }
-    
+
     public Pixmap getPresent() {
         return present;
     }
@@ -351,6 +360,6 @@ public enum Assets {
 
     public void setSoundPresent(Sound soundPresent) {
         this.soundPresent = soundPresent;
-    }    
-    
+    }
+
 }
