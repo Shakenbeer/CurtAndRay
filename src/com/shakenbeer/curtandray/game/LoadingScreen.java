@@ -24,7 +24,10 @@ public class LoadingScreen extends Screen {
 
         Graphics g = game.getGraphics();
 
-        assets.setBackground(g.newPixmap("background.png", PixmapFormat.RGB565));
+        assets.backgrounds[0] = g.newPixmap("background0.png", PixmapFormat.RGB565);
+        assets.backgrounds[1] = g.newPixmap("background1.png", PixmapFormat.RGB565);
+        assets.backgrounds[2] = g.newPixmap("background2.png", PixmapFormat.RGB565);
+        assets.backgrounds[3] = g.newPixmap("background3.png", PixmapFormat.RGB565);
 
         assets.setButtonArrowLeft(g.newPixmap("button_arrow_left.png", PixmapFormat.ARGB4444));
         assets.setButtonArrowRight(g.newPixmap("button_arrow_right.png", PixmapFormat.ARGB4444));

@@ -63,7 +63,7 @@ public class GameScreen extends Screen {
 
     private void drawCommon(Graphics graphics) {
 
-        graphics.drawPixmap(Assets.INSTANCE.getBackground(), 0, 0);
+        graphics.drawPixmap(controller.background, 0, 0);
         controller.nextLevel.draw(graphics);
         controller.arrowLeft.draw(graphics);
         controller.arrowRight.draw(graphics);

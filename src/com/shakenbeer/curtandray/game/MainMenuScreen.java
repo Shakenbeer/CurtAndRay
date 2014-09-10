@@ -12,7 +12,7 @@ import com.badlogic.androidgames.framework.Screen;
 public class MainMenuScreen extends Screen {
 
     public MainMenuScreen(Game game) {
-        super(game);        
+        super(game);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class MainMenuScreen extends Screen {
     public void present(float deltaTime) {
         Graphics graphics = game.getGraphics();
 
-        graphics.drawPixmap(Assets.INSTANCE.getBackground(), 0, 0);
+        graphics.drawPixmap(Assets.INSTANCE.backgrounds[0], 0, 0);
         graphics.drawPixmap(Assets.INSTANCE.getLogo(), 34, 30);
         graphics.drawPixmap(Assets.INSTANCE.getButtonPlay(), 134, 600);
         graphics.drawPixmap(Assets.INSTANCE.getButtonHowTo(), 184, 850);
@@ -87,7 +87,7 @@ public class MainMenuScreen extends Screen {
         }
         graphics.drawPixmap(Assets.INSTANCE.getButtonSpeed(), 488, 1044);
         graphics.drawText(String.valueOf(Settings.gameSpeed), 545, 1175, 65, Color.WHITE);
-        
+
         graphics.drawPixmap(Assets.INSTANCE.getPresent(), 164, 1090);
         graphics.drawText(String.valueOf(Settings.presentsCollected), 260, 1170, 70, Color.parseColor("#00779E"));
 
@@ -109,23 +109,23 @@ public class MainMenuScreen extends Screen {
         // TODO Auto-generated method stub
 
     }
-    
+
     private boolean soundOptionTouched(TouchEvent event) {
         return inBounds(event, 0, 1044, 140, 140);
     }
-    
+
     private boolean playTouched(TouchEvent event) {
         return inBounds(event, 134, 600, 500, 200);
     }
-    
+
     private boolean howToTouched(TouchEvent event) {
         return inBounds(event, 184, 850, 400, 150);
     }
-    
+
     private boolean modeOptionTouched(TouchEvent event) {
         return inBounds(event, 628, 1044, 140, 140);
     }
-    
+
     private boolean speedTouched(TouchEvent event) {
         return inBounds(event, 488, 1044, 140, 140);
     }

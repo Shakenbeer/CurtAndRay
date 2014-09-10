@@ -37,9 +37,9 @@ public class LevelsScreen extends Screen {
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
-//                    if (selected <= Settings.currentLevel) {
+                    if (selected <= Settings.currentLevel) {
                         game.setScreen(new GameScreen(game, selected));
-//                    }
+                    }
                 }
                 if (page < PAGE_COUNT
                         && inBounds(event, 768 - arrowRight.getWidth(), 1184 - arrowRight.getHeight(),
@@ -67,7 +67,7 @@ public class LevelsScreen extends Screen {
     public void present(float deltaTime) {
         Graphics graphics = game.getGraphics();
 
-        graphics.drawPixmap(Assets.INSTANCE.getBackground(), 0, 0);
+        graphics.drawPixmap(Assets.INSTANCE.backgrounds[0], 0, 0);
 
         if (page < PAGE_COUNT) {
             graphics.drawPixmap(arrowRight, 768 - arrowRight.getWidth(), 1184 - arrowRight.getHeight());

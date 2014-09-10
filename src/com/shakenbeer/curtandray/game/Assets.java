@@ -7,6 +7,8 @@ import com.badlogic.androidgames.framework.Sound;
 
 public enum Assets {
     INSTANCE;
+    
+    Pixmap[] backgrounds = new Pixmap[4];
 
     private Pixmap buttonArrowLeft;
     private Pixmap buttonArrowRight;
@@ -25,7 +27,6 @@ public enum Assets {
     private Pixmap screenPause;
     private Pixmap buttonPlay;
     private Pixmap ray;
-    private Pixmap background;
     private Pixmap buttonSoundOn;
     private Pixmap buttonSoundOff;
     private Pixmap buttonStart;
@@ -184,14 +185,6 @@ public enum Assets {
 
     public void setRay(Pixmap ray) {
         this.ray = ray;
-    }
-
-    public Pixmap getBackground() {
-        return background;
-    }
-
-    public void setBackground(Pixmap background) {
-        this.background = background;
     }
 
     public Pixmap getButtonSoundOn() {

@@ -35,7 +35,7 @@ public class HowToScreen3 extends Screen {
     @Override
     public void present(float deltaTime) {
         Graphics graphics = game.getGraphics();
-        graphics.drawPixmap(Assets.INSTANCE.getBackground(), 0, 0);
+        graphics.drawPixmap(Assets.INSTANCE.backgrounds[0], 0, 0);
         graphics.drawPixmap(Assets.INSTANCE.getScreenHowTo3(), 34, 0);
         graphics.drawPixmap(Assets.INSTANCE.getButtonClose(), 648, 1084);
 

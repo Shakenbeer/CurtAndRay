@@ -73,6 +73,8 @@ public class GameController {
     private Random random = new Random();
     private int presentsCollected;
 
+    public Pixmap background;
+
     public GameController(Game game, int level) {
         this.game = game;
         this.level = level;
@@ -142,6 +144,9 @@ public class GameController {
     }
 
     private void initLevel() {
+        int back = ((level - 1) / 7) % 4;
+        background = Assets.INSTANCE.backgrounds[back];
+
         curt.posX = CURT_INIT_X;
         curt.posY = CURT_INIT_Y;
         curt.angle = 0;
@@ -246,7 +251,7 @@ public class GameController {
 
     private void updateRayHideStage(List<TouchEvent> touchEvents, float deltaTime) {
         int len = touchEvents.size();
-        
+
         for (int i = 0; i < len; i++) {
             TouchEvent event = touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP) {
@@ -259,7 +264,7 @@ public class GameController {
                         if (mines.get(j).opacity < 255) {
                             break;
                         }
-                        minePos.add(new int[] {(int)mines.get(j).posX, (int)mines.get(j).posY});
+                        minePos.add(new int[] { (int) mines.get(j).posX, (int) mines.get(j).posY });
                     }
                     ray.velNormSqr = 0;
                     chars.remove(ray);
@@ -270,8 +275,8 @@ public class GameController {
                     return;
                 }
             }
-        }        
-        
+        }
+
         float[] rv;
         GameObject mine;
 
