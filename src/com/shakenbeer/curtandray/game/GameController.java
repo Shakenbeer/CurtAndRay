@@ -526,8 +526,10 @@ public class GameController {
         } else {
             level++;
         }
-        Settings.currentLevel = level;
-        Settings.save(game.getFileIO());
+        if (Settings.currentLevel < level) {
+            Settings.currentLevel = level;
+            Settings.save(game.getFileIO());
+        }
     }
 
 }
