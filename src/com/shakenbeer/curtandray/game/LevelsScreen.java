@@ -50,12 +50,20 @@ public class LevelsScreen extends Screen {
                     game.setScreen(new LevelsScreen(game, page + 1));
                 }
                 if (page > 1
-                        && inBounds(event, 0, 1184 - arrowRight.getHeight(), arrowRight.getWidth(),
-                                arrowRight.getHeight())) {
+                        && inBounds(event, 0, 1184 - arrowLeft.getHeight(), arrowLeft.getWidth(),
+                                arrowLeft.getHeight())) {
                     if (Settings.soundEnabled) {
                         Assets.INSTANCE.getSoundClick().play(1);
                     }
                     game.setScreen(new LevelsScreen(game, page - 1));
+                }
+                if (page == 1
+                        && inBounds(event, 0, 1184 - arrowLeft.getHeight(), arrowLeft.getWidth(),
+                                arrowLeft.getHeight())) {
+                    if (Settings.soundEnabled) {
+                        Assets.INSTANCE.getSoundClick().play(1);
+                    }
+                    game.setScreen(new MainMenuScreen(game));
                 }
             }
 
@@ -72,9 +80,8 @@ public class LevelsScreen extends Screen {
         if (page < PAGE_COUNT) {
             graphics.drawPixmap(arrowRight, 768 - arrowRight.getWidth(), 1184 - arrowRight.getHeight());
         }
-        if (page > 1) {
-            graphics.drawPixmap(arrowLeft, 0, 1184 - arrowRight.getHeight());
-        }
+        graphics.drawPixmap(arrowLeft, 0, 1184 - arrowLeft.getHeight());
+
 
         for (int i = 0; i < LEVELS_PER_PAGE; i++) {
             if (i + 1 + LEVELS_PER_PAGE * (page - 1) <= Settings.currentLevel) {
