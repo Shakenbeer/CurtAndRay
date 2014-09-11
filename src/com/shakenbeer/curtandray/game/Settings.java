@@ -10,8 +10,6 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
-import android.util.Log;
-
 import com.badlogic.androidgames.framework.FileIO;
 
 public class Settings {
