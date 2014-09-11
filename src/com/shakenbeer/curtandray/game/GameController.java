@@ -230,9 +230,9 @@ public class GameController {
             rayTarget = minePos.remove();
             rv = directionVector(ray, rayTarget);
             changeDirection(ray, rv);
-            rvSqrPrev = 1000000.0f;
+            rvSqrPrev = Float.MAX_VALUE;
         }
-        
+
         float rvSqr = rv[0] * rv[0] + rv[1] * rv[1];
 
         if (rvSqr < TARGET_RADIUS || rvSqr > rvSqrPrev) {
@@ -274,9 +274,7 @@ public class GameController {
                     }
                     ray.velNormSqr = 0;
                     chars.remove(ray);
-                    if (!Settings.hardMode) {
-                        hideMines();
-                    }
+                    hideMines();
                     stage = LevelStage.BuildPath;
                     return;
                 }
@@ -293,7 +291,7 @@ public class GameController {
             rayTarget = new int[] { (int) mine.posX, (int) mine.posY };
             rv = directionVector(ray, rayTarget);
             changeDirection(ray, rv);
-            rvSqrPrev = 1000000.0f;
+            rvSqrPrev = Float.MAX_VALUE;
         }
 
         float rvSqr = rv[0] * rv[0] + rv[1] * rv[1];
@@ -312,9 +310,7 @@ public class GameController {
             if (mines.get(0).opacity < 255) {
                 ray.velNormSqr = 0;
                 chars.remove(ray);
-                if (!Settings.hardMode) {
-                    hideMines();
-                }
+                hideMines();
                 stage = LevelStage.BuildPath;
             }
         } else {
@@ -397,7 +393,7 @@ public class GameController {
             }
             rv = directionVector(curt, curtTarget);
             changeDirection(curt, rv);
-            rvSqrPrev = 1000000.0f;
+            rvSqrPrev = Float.MAX_VALUE;
         }
 
         float rvSqr = rv[0] * rv[0] + rv[1] * rv[1];
@@ -411,7 +407,7 @@ public class GameController {
             flags.remove(0);
             curtTarget = null;
         } else {
-            rvSqrPrev = rvSqr;  
+            rvSqrPrev = rvSqr;
         }
 
         if (curt.posY < -curt.pixmap.getHeight()) {
